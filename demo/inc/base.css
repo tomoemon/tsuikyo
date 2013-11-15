@@ -1,0 +1,62 @@
+body {
+	font-size: 100%;
+	color: #333333;
+	background: #fafafa;
+}
+
+div {
+
+}
+
+pre.prettyprint {
+	font-size: 90%;
+	margin-left: 2em;
+	margin-right: 1em;
+	border: 1px solid #999;
+	padding: .5em 0 .5em 1em;
+    white-space: -moz-pre-wrap; /* Mozilla */
+    white-space: -pre-wrap;     /* Opera 4-6 */
+    white-space: -o-pre-wrap;   /* Opera 7 */
+    white-space: pre-wrap;      /* CSS3 */
+    word-wrap: break-word;      /* IE 5.5+ */
+}
+
+p {
+	margin: 0.5em 1em 0.8em 1em;
+	padding: 0 .5em;
+	line-height: 1.4;
+}
+
+h1 {
+	color: #486d6b;
+}
+
+h2 {
+	color: #486d6b;
+	font-size: 160%;
+	line-height: 1.2;
+	margin: 0.5em 0;
+	padding: 0.1em 0.5em;
+	border-bottom: 2px dotted #486d6b;
+}
+
+h3 {
+	border: 1px solid #cccccc;
+	display: inline;
+	font-size: 120%;
+	font-weight: normal;
+	line-height: 170%;
+	margin: 0.5em 0;
+	padding: 0.25em 0.5em;
+	color: #708090;
+}
+
+div#game {
+	margin-left: 2em;
+	margin-right: 4em;
+	background-color: #eee;
+}
+div#game p {
+	margin: 0;
+	font-family: monospace;
+}

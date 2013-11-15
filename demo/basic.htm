@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<title>Tsuikyo - Demo::Basic</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+	<link href="inc/prettify.css" type="text/css" rel="stylesheet" />
+	<link href="inc/base.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="inc/prettify.js"></script>
+	<script type="text/javascript" src="../lib/tsuikyo.util.js"></script>
+	<script type="text/javascript" src="../lib/tsuikyo.client.js"></script>
+	<script type="text/javascript" src="../lib/tsuikyo.layout.js"></script>
+	<script type="text/javascript" src="../lib/tsuikyo.im.js"></script>
+	<script type="text/javascript" src="../lib/tsuikyo.engine.js"></script>
+	<script type="text/javascript">//<![CDATA[
+window.onload = function(){
+	var code = document.getElementById("code").innerHTML;
+	var ke = document.getElementById("kstr");
+	var me = document.getElementById("miss");
+	var e = document.getElementById("str");
+	window._printKeyStr= function(msg) {
+		ke.innerHTML = msg + "&nbsp;";
+	};
+	window._printStr= function(msg) {
+		e.innerHTML = msg + "&nbsp;";
+	};
+	window._printMiss= function(msg) {
+		me.innerHTML = "miss: " + msg;
+	};
+	window._clear= function(msg) {
+		_printKeyStr("");
+		_printStr("");
+		_printMiss(0);
+	};
+	code = code.replace(/&gt;|&lt;/g, function(m) {
+		return m === "&gt;" ? ">" : "<";
+	});
+
+	eval(code);
+	if (/*@cc_on!@*/true) prettyPrint();
+};
+//]]>
+	</script>
+</head>
+<body>
+<h1>Tsuikyo - Demo::Basic</h1>
+<p>おそらく標準的な作りはこんなかんじ．</p>
+<h2>test</h2>
+<p>出題されたワードを順次打っていきます．</p>
+<div id="game">
+	<p id="miss">miss: 0</p>
+	<p id="str">&nbsp;</p>
+	<p id="kstr">&nbsp;</p>
+</div>
+<h2>src</h2>
+<pre id="code" class="prettyprint lang-js">
+var ts = new Tsuikyo.engine();
+var words = ["さじをなげる", "うらをかく", "えんぎをかつぐ", "おくのてをだす", "たなにあげる"];
+var i = -1;
+
+next();    // 開始
+
+function next() {
+    var wordStr, wordObj;
+    i = ++i % words.length;	  // 次のワードとする文字列を選択
+    wordStr = words[i];
+
+    wordObj = ts.make(wordStr);   // 文字列からワードを作成
+    wordObj.listen(typedHandler); // イベントハンドラ設定 (see <a href="#tips1">#1</a>)
+    wordObj.test();               // 表示状態の更新 (see <a href="#tips2">#2</a>)
+}
+
+function typedHandler(e) {   // ワードイベントハンドラ (see <a href="#tips3">#3</a>)
+    // 着色してワード表示
+    var hiragana = '&lt;span style="color:blue"&gt;' + this.str(this.pos()) + '&lt;/span&gt;' + this.rstr(this.pos());
+    var romaji = '&lt;span style="color:blue"&gt;' + this.kstr(this.kpos()) + '&lt;/span&gt;' + this.rkstr(this.kpos());
+    _printStr(hiragana);
+    _printKeyStr(romaji);
+
+    if (e.finish) { // 判定によって処理をわける
+        _clear();
+        this.sleep();          // このワードの listen 状態を解除 (see <a href="#tips1">#1</a>)
+        setTimeout(next, 200); // 200ms 待ってから次ワードへ
+    } else if (e.miss) {
+        _printMiss(this.missCount());
+    }
+}
+</pre>
+<h2>tips</h2>
+<h3 id="tips1">[#1] ハンドラの登録 Word.listen()</h3>
+<p>Word.listen() を呼び出すことでそのワードが listen 状態になります．ワードが listen 状態にあるとき，そのワードは自動的にキーイベント受け取ります．listen 状態は Word.sleep() によって解除できます．</p>
+<p>複数のワードが同時に listen 状態にある場合は，複数のワードそれぞれにキーイベントが送られることになります．ここでは，打ち終わったワードを sleep() させ，常に 1 ワードのみが listen 状態にあるようにしています．</p>
+<h3 id="tips2">[#2] 仮想打鍵 Word.stroke() Word.test()</h3>
+<p>Word.stroke() を仮想キーを引数に呼び出すと，その打鍵が実際になされたものとして処理します．</p>
+<p>Word.test() を仮想キーを引数に呼び出すと，その打鍵について判定を行いコールバック関数を呼び出しますが，内部状態は変化させません．</p>
+<p>また引数とした仮想キーが受理しうるキーでない場合は，stroke/test どちらも判定結果を TYPE_IGNORE という特別な値とし，内部状態は変化させません．これは受理しうるキーであるが現在要求されているキーではない場合に返される TYPE_MISS とは区別されることに注意して下さい．</p>
+<p>ここでは Word.test() を空引数で呼び出して（これは受理しうるキーではないと必ず判断される），内部状態を変化させずにコールバックを発火させ，表示状態を更新させています．</p>
+<h3 id="tips3">[#3] ワードに登録したハンドラの発火</h3>
+<p>Word.listen() を呼び出す際に第一引数に関数を与えておくと，打鍵がそのワードで処理された場合に Tsuikyo からその関数を呼び出してくれます（いわゆるコールバックによるイベントハンドラ）．</p>
+<p>その場合，ワードイベントハンドラ内における this はそのワードオブジェクト自身を指します．</p>
+<p>ここでの例のように this.str(), this.pos() などとして自分自身の各種状態を取得することができます．</p>
+</body>
+</html>
