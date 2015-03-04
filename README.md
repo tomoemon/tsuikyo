@@ -6,7 +6,7 @@ W/H さん作の Tsuikyo からローマ字かな変換部分だけ取り出そ�
 > https://code.google.com/p/tsuikyo/
 > http://dvorak.jp/softwares/tsuikyo2.htm
 
-変わらない部分
+変わらないこと
 ---------------------------
 
 * IE6 以降をサポートする（ECMAScript5 以降の機能を使わない）
@@ -15,15 +15,21 @@ W/H さん作の Tsuikyo からローマ字かな変換部分だけ取り出そ�
 * 複数のキーボードをサポート
 * 複数の入力方式をサポート
 
-変わる（可能性のある）部分
+変わる（可能性のある）こと
 --------------------------
 
 * (done) コードベースを JavaScript から TypeScript へ
 * (done) ローマ字かな変換部分がブラウザ依存している部分があるので分離する (im.js, client.js)
 * (done) タイピングゲームに必要な要素とキーイベント周りが一緒になっている (engine.js)
-* (done) webpack.js で1ファイルへの結合、minify を自動化
-* unittest の作成
 * Tsuikyo, Word, Node が提供するインターフェース
+
+新しくやりたいこと
+-------------------------
+
+* (done) webpack.js で1ファイルへの結合、minify を自動化
+* Travis CI で自動ビルド
+* unittest の作成
+* ドキュメントの自動生成
 
 ライセンス
 --------------------------
