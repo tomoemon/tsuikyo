@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<title>Tsuikyo - Demo::Benchmark</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+	<link href="inc/prettify.css" type="text/css" rel="stylesheet" />
+	<link href="inc/base.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="inc/prettify.js"></script>
+	<script type="text/javascript" src="./tsuikyo.js"></script>
+	<script type="text/javascript">//<![CDATA[
+window.onload = function(){
+	var code = document.getElementById("code").innerHTML;
+	var e = document.getElementById("output");
+
+	window._log = function(msg) {
+		e.innerHTML += msg + "<br />";
+	};
+	window._perf = function(s, fn, _c) {
+		var c = _c || 1000;
+		var ret;
+		var t = new Date().getTime();
+
+		while (c--) {
+			fn();
+		}
+
+		ret = new Date().getTime() - t;
+		_log(s + ": " + ret);
+		return ret;
+	};
+	window._clear = function() {
+		e.innerHTML = "";
+	};
+	code = code.replace(/&gt;|&lt;/g, function(m) {
+		return m === "&gt;" ? ">" : "<";
+	});
+	eval(code);
+	if (/*@cc_on!@*/true) prettyPrint();
+};
+//]]>
+	</script>
+</head>
+<body>
+<h1>Tsuikyo - Demo::Benchmark</h1>
+<p>どれくらい無茶してもよさそうかの指標．</p>
+<h2>test</h2>
+<p>Enter キーを押下で計測を開始します．</p>
+<div id="game">
+	<p id="output">&nbsp;</p>
+</div>
+<h2>src</h2>
+<pre id="code" class="prettyprint lang-js">
+var ts = new Tsuikyo().listen(function(e) {
+    if (e.key === "Enter") {
+        bench();
+    }
+});
+
+function bench() {
+    var wordSrc = "じっさいよくとうろくされそうなぶんしょう";
+    var type = "jissaiMyokutoIuroSkusaSresounIabunshNCou";
+    _clear();
+
+    // 1. 初期化 -----------------------
+    _perf("Initialize", function() {
+        // sleep() はイベントハンドラの大量登録を避けるため
+        new Tsuikyo().sleep();
+    }, 1000);
+
+    // 2. ワード作成 -------------------
+    _perf("WordMake", function() {
+        ts.make(wordSrc);
+    }, 50);	// 20 (=length) * 50 = 1000 kanas (see <a href="#tips1">#1</a>)
+
+    // 3. 打鍵の処理 -------------------
+    word = ts.make(wordSrc);
+    word.listen(function(e) {
+        // コールバックも登録した状態で計測
+        if (e.finish) {
+            this.init();
+        }
+    });
+    _perf("TypeHandle", function() {
+        for (var i = 0; i < type.length; i++) {
+            ts.stroke(type.charAt(i));
+        }
+    }, 25); // 40 (=length) * 25 = 1000 strokes (see <a href="#tips2">#2</a>)
+    word.sleep();
+}
+
+</pre>
+<h2>tips</h2>
+<h3 id="tips1">[#1] ワードオブジェクトの作成コスト</h3>
+<p>組み込みの IM 設定の使うパーサでは，ソース文字列の長さに対しだいたい線形なコストがかかります．</p>
+<p>このベンチでは roma パーサに 1000 仮名を処理させた際の時間を調べていますが，もちろん，定義が多く複雑な設定（例えば，im:"dvojp"）ではさらに時間がかかります．</p>
+<p>さすがにここがネックになることは考えにくいですが．非常に長大なワードを作る時や，まとめてワードを作る時に少し気にするといい感じです．</p>
+<h3 id="tips2">[#2] 打鍵処理のコスト</h3>
+<p>実装の都合で意外にコストが高いので注意が必要です．ここでは 1000 打鍵分の処理にかかる時間を調べています．</p>
+<p>手元の IE6 だとこれに 300ms 強もかかります．瞬間的な最高入力速度として秒間 30 打鍵程度を想定すると，同時に 100 ワードについて判定を行うと処理が追いつかなくなる計算です．100 ワードというと余裕がありそうですが，表示状態の更新等別の処理もあるでしょうし，ユーザにもたつきを感じさせないためにも 20 ワード程度が事実上の限界に思えます．</p>
+<p>というのは IE6 を考慮に入れた場合の話．IE8 では IE6 の倍くらい速く，割と余裕があります．その他モダンなブラウザではまったく気にする必要はないでしょう．</p>
+<p>なお stroke() ではなく test() で判定だけをする場合には，状態の遷移など比較的重い処理が飛ばされるため，半分以下のコストで済みます．</p>
+</body>
+</html>

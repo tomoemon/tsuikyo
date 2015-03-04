@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<title>Tsuikyo - Demo::JIS_X_6002</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+	<link href="inc/prettify.css" type="text/css" rel="stylesheet" />
+	<link href="inc/base.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="inc/prettify.js"></script>
+	<script type="text/javascript" src="./tsuikyo.js"></script>
+	<script type="text/javascript">//<![CDATA[
+window.onload = function(){
+	var code = document.getElementById("code").innerHTML;
+	var ke = document.getElementById("kstr");
+	var me = document.getElementById("miss");
+	var e = document.getElementById("str");
+	window._printKeyStr= function(msg) {
+		ke.innerHTML = msg + "&nbsp;";
+	};
+	window._printStr= function(msg) {
+		e.innerHTML = msg + "&nbsp;";
+	};
+	window._printMiss= function(msg) {
+		me.innerHTML = "miss: " + msg;
+	};
+	window._clear= function(msg) {
+		_printKeyStr("");
+		_printStr("");
+		_printMiss(0);
+	};
+
+	code = code.replace(/&gt;|&lt;/g, function(m) {
+		return m === "&gt;" ? ">" : "<";
+	});
+
+	eval(code);
+	if (/*@cc_on!@*/true) prettyPrint();
+};
+//]]>
+	</script>
+</head>
+<body>
+<h1>Tsuikyo - Demo::JIS_X_6002</h1>
+<p>組み込みの JIS かな用判定を使って．ascii 部分は qwerty で打てます．</p>
+<p>Tsuikyo を new する部分とワード以外は <a href="basic.htm">Basic</a> と同じです．</p>
+<h2>test</h2>
+<p>出題されたワードを順次 JIS かなで打っていきます．カナロック状態等を弄る必要はありません．</p>
+<div id="game">
+	<p id="miss">miss: 0</p>
+	<p id="str">&nbsp;</p>
+	<p id="kstr">&nbsp;</p>
+</div>
+<h2>src</h2>
+<pre id="code" class="prettyprint lang-js">
+var ts = new Tsuikyo({
+    keyboard: "jp",       // Qwerty on JP109 基準に設定 (see <a href="#tips1">#1</a>)
+    layout: "qwejp",    // キーマップを Qwerty に設定 (see <a href="#tips1">#1</a>)
+    im: "jis"        // IM を JIS かなに設定 (see <a href="#tips1">#1</a>)
+});
+var words = ["さじをなげる", "うらをかく", "コンピューター", "ローロー", "ひらがなとascii", "そんな、ことって・・・！"];
+var i = -1;
+
+next();
+
+function next() {
+    var wordStr, wordObj;
+    i = ++i % words.length;
+    wordStr = words[i];
+
+    wordObj = ts.make(wordStr);
+    wordObj.listen(typedHandler);
+    wordObj.test();
+}
+
+function typedHandler(e) {
+    var str = '&lt;span style="color:blue"&gt;' + this.str(this.pos()) + '&lt;/span&gt;' + this.rstr(this.pos());
+    var keys = '&lt;span style="color:blue"&gt;' + this.kstr(this.kpos()) + '&lt;/span&gt;' + this.rkstr(this.kpos());
+    _printStr(str);
+    _printKeyStr(keys);
+
+    if (e.finish) {
+        _clear();
+        this.sleep();
+        setTimeout(next, 200);
+    } else if (e.miss) {
+        _printMiss(this.missCount());
+    }
+}
+</pre>
+<h2>tips</h2>
+<h3 id="tips1">[#1] 入力の設定</h3>
+<p>Tsuikyo はブラウザのネイティブキーイベントをラップし，環境間で異なるキーコード値を吸収した後に目的の入力設定に適した形に再変換します．</p>
+<p>押されたキーの情報はまず OS やブラウザに依存しない，キーボード上の物理位置を示す（ことが理想の）キーコード値にまで還元されます．その際にキーシンボルからキー位置を得る逆変換が必要になり，その変換定義をコンストラクタ引数の kbd プロパティで指定できます．デフォルトでは一般的な日本語キーボード (jp109) を示す組み込み定義 "jp" 使われます．</p>
+<p>得たキーコード情報とシフト状態とから，意味的なキー情報であるキーシンボルを決定します．その変換定義をコンストラクタ引数の map プロパティで指定できます．デフォルトではロジカルペアリングな Qwerty を示す組み込み定義 "qwejp" が使われます．</p>
+<p>一方でワードオブジェクトを作る際に，ソース文字列をみてキーシンボルをアルファベットとして受理し状態を遷移していくオートマトンを作ります．その変換定義をコンストラクタ引数の im プロパティで指定できます．デフォルトでは組み込み定義 "roma" が使われます．これはひらがな・カタカナ部分を JIS X 4063 をベースにした対応する 1 つ以上のキーシンボル列に，半角英数・全角英数部分を対応するキーシンボル単体に紐づけるもので，いわゆるローマ字入力を実現します．</p>
+<p>ここでの例では kbd, map はデフォルト値を明示的に指定し，im を "jis" として組み込みの JIS かな用変換定義を読み込ませています．これはひらがな・カタカナ部分は濁音・半濁音を分離させたかな単位のキーシンボル列に，半角英数・全角英数部分は対応するキーシンボル単体に紐づけるもので，日本語部分は JIS かな入力で，Ascii 部分は map で指定されたキーマップで打てるかな入力を実現します．</p>
+<h3 id="tips2">[#2] map の重ね合わせ</h3>
+<p>指定する im によって，map で指定したキーマップの定義がオーバーロードされることがあります．例えばここでの im:"jis" は元の map にひらがな・濁点・半濁点等をキーシンボルとする定義を追加します．</p>
+<p>すなわちキーコードとシフト状態に対応するキーシンボルが複数になりえます．たとえばキーコード 70 でシフトなしの場合，qwejp マップでは "f" がキーシンボルですが，im:"jis" によってそこに "は" が追加され，内部的に保持し利用するキーマップでは ["f", "は"] が対応することになります．</p>
+<p>キー判定の際に対応するキーシンボルが複数ある場合，いずれかのキーシンボルが要求を満たしていれば正しい打鍵と見なされます．</p>
+<p>この実装により，例えば {map:"dvo", im:"jis"} として，ひらがな部分は JIS かなで，ascii 部分は Dvorak で打てるということが実現されます．</p>
+<p>また Opera で 「ろ」と「ー」が区別不可能な問題も，オーバーロードを使って単一キーコードに「ー」と「ろ」を兼ねさせて対処しています．</p>
+</body>
+</html>

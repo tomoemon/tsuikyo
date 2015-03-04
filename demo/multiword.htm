@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<title>Tsuikyo - Demo::MultiWord</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+	<link href="inc/prettify.css" type="text/css" rel="stylesheet" />
+	<link href="inc/base.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="inc/prettify.js"></script>
+	<script type="text/javascript" src="./tsuikyo.js"></script>
+	<script type="text/javascript">//<![CDATA[
+window.onload = function(){
+	var code = document.getElementById("code").innerHTML;
+	var ja = document.getElementById("ja");
+	var en = [
+		document.getElementById("en0"),
+		document.getElementById("en1"),
+		document.getElementById("en2"),
+		document.getElementById("en3")
+	];
+
+	window._print = function(msg, i) {
+		en[i].innerHTML = msg + "&nbsp;";
+	};
+	window._printProblem = function(msg) {
+		ja.innerHTML = msg + "&nbsp;";
+	};
+	window._shuffle = function(a) {
+		var i = a.length;
+	    while (i) {
+	        var j = Math.floor(Math.random() * i);
+	        var t = a[--i];
+	        a[i] = a[j];
+	        a[j] = t;
+	    }
+	    return a;
+	};
+	window._inactiveColor = function(i) {
+		en[i].style.backgroundColor = "#ccc";
+	};
+	window._activeColor = function(i) {
+		en[i].style.backgroundColor = "#eee";
+	};
+	window._wrongColor = function(i) {
+		en[i].style.backgroundColor = "#999";
+	};
+
+	code = code.replace(/&gt;|&lt;/g, function(m) {
+		return m === "&gt;" ? ">" : "<";
+	});
+
+	eval(code);
+	if (/*@cc_on!@*/true) prettyPrint();
+};
+//]]>
+	</script>
+</head>
+<body>
+<h1>Tsuikyo - Demo::MultiWord</h1>
+<p>ワードへのキー送出や結果の扱いを細かく制御する例．</p>
+<h2>test</h2>
+<p>日本語に対応する英単語を打つと次に進みます．間違えると選び直しです．</p>
+<div id="game">
+	<p id="ja"></p>
+	<p id="en0"></p>
+	<p id="en1"></p>
+	<p id="en2"></p>
+	<p id="en3"></p>
+</div>
+<h2>src</h2>
+<pre id="code" class="prettyprint lang-js">
+var ts = new Tsuikyo({im: "ascii"}); // ascii 文字のみを処理 (see <a href="#tips1">#1</a>)
+ts.listen(tsEventHandler);
+
+// 全体のキーイベントハンドラ (see <a href="#tips2">#2</a>)
+function tsEventHandler(e) {
+    var w = this.words(); // listen 状態のワード群を取得
+    var accepted = [], rejected = [];
+
+    if (!e.sendable) {  // 受理可能性のないキーの場合
+        if (e.key === "Esc") {
+            reset();        // Esc キーで中途状態を破棄
+        }
+        return;
+    }
+
+    for (var i = 0; i < w.length; i++) {
+        if (w[i].stroke(e).accept) { // 各ワードにキーを送って判定
+            accepted.push(i);
+        } else {
+            rejected.push(i);
+        }
+    }
+    if (accepted.length === 0) {
+    	// 完全にミスタイプ
+    	return;
+    }
+
+    // 一つ以上のワードで正打のとき，
+    for (i = 0; i < rejected.length; i++) { // 残りは sleep させて打鍵対象から外す
+        w[rejected[i]].sleep();
+        _inactiveColor(w[rejected[i]].tag);
+    }
+
+    // 打ち切られたワードがあれば正解か判定
+    if (userAnsWord) {
+        if (userAnsWord === ansWord) {
+            next();
+        } else {
+            _wrongColor(userAnsWord.sleep().tag);
+            reset();
+        }
+        userAnsWord = null;
+    }
+
+    return false;    // イベント伝播の抑止 (see <a href="#tips3">#3</a>)
+}
+
+// 各ワードのキーイベントハンドラ
+function wordEventHandler(e) {
+    var kstr = '&lt;span style="color:blue"&gt;' + this.kstr(this.kpos()) + '&lt;/span&gt;' + this.rkstr(this.kpos());
+    _print(kstr, this.tag);
+
+    if (e.finish) {
+        userAnsWord = this;  // ユーザの選択した（打ち切った）ワード
+    }
+}
+
+// 打ち切られていないワードを初期化し listen 状態に
+function reset() {
+    for (var i = 0; i < currentWords.length; i++) {
+        if (currentWords[i].finished() === false) {
+            _activeColor(i);
+            _print(currentWords[i].init().listen(wordEventHandler).kstr(), i);
+        }
+    }
+}
+
+// 次の問題へ
+function next() {
+    var newWord;
+
+    if (i + 7 < words.length) {
+        i += 4;
+    } else {
+        i = 0;
+    }
+
+    // 念のため以前のワード群は全て sleep
+    for (var j = 0; j < currentWords.length; j++) {
+        currentWords[j].sleep();
+    }
+
+    // 新たに表示する 4 ワードを作り，currentWords で保持
+    currentWords = [];
+    for (var j = 0; j < 4; j++) {
+        // ワードを作成時，タグとして番号 0~3 をつけておく
+        newWord = ts.make(words[i + j], j);
+        currentWords.push(newWord);
+    }
+
+    // 正解にするワードを currentWords から選ぶ
+    ansWord = currentWords[Math.floor(Math.random() * 4)];
+    _printProblem(jwords[ansWord.str()]); // 問題文を表示
+    reset();     // 画面に反映させ，listen
+}
+
+var jwords = {ace:"名人",aid:"助成",aim:"目的",air:"空気",ale:"ビール",apt:"適切な",arc:"円弧",are:"アール（面積）",arm:"腕",art:"芸術",ash:"灰色",ass:"ロバ",awe:"畏怖",aye:"賛成票",ban:"破門",bat:"こん棒",bay:"入り江",beg:"懇願する",bet:"賭け",bid:"入札",bin:"ゴミ箱",bit:"少量",bog:"沼地",bow:"おじぎ",bud:"つぼみ",bum:"能なし",cab:"タクシー",cod:"からかう",con:"詐欺",cop:"警察",cow:"雌牛",cue:"合図",dam:"堰堤",den:"隠れ家",dew:"しずく",dig:"皮肉",dim:"薄暗い",din:"騒音",dip:"くぼみ",don:"首領",dub:"吹き替え",due:"手数料",duo:"二重奏",dye:"染料",ebb:"減退",eel:"うなぎ",ego:"自我",era:"時代",eve:"前夜",fad:"流行",fee:"料金",fig:"いちじく",flu:"インフルエンザ",foe:"敵",fog:"霧",fur:"毛皮",gag:"言論統制",gap:"間隙",gem:"宝石",gig:"仕事",gin:"巻き上げ機",gum:"歯肉",gut:"はらわた",gym:"体育館",ham:"豚もも肉",hay:"干し草",hen:"めんどり",hoe:"くわ",hog:"ブタ",hop:"跳ぶ",hue:"色相",hug:"抱擁",hum:"鼻歌",hut:"山小屋",icy:"冷淡な",inn:"宿屋",ivy:"ツタ",jar:"瓶",jaw:"あご",jog:"急カーブ",jot:"メモする",jug:"水差し",kin:"一族",kit:"一式",lad:"少年",lag:"遅延",lap:"膝",lax:"ゆるんだ",lay:"産卵する",lid:"ふた",lie:"虚言",lip:"唇",log:"丸太",mad:"不機嫌",mar:"台無しにする",mat:"もつれる",mid:"中間の",mob:"大衆",mop:"拭く",mow:"刈り取る",mud:"泥",mug:"顔",mum:"無言",nap:"昼寝",net:"純量",nip:"かむ",nun:"修道女",nut:"木の実",oar:"こぎ手",odd:"奇数",opt:"選ぶ",ore:"鉱石",owl:"ふくろう",pad:"そっと歩く",pan:"平鍋",par:"同等",pat:"軽くたたく",paw:"動物の手足",pea:"エンドウ豆",peg:"くぎを打つ",pep:"活気",pie:"総計",pit:"落とし穴",ply:"せっせと働く",pop:"飛び出る",pry:"のぞき見",rag:"ぼろ切れ",ram:"激突する",rap:"雑談",ray:"光線",rib:"あばら骨",rid:"取り除く",rig:"装備",rim:"へり",rip:"裂ける",rob:"強奪する",rod:"棒",rot:"腐敗",row:"列",rub:"摩擦",rug:"膝掛け",rye:"ライ麦",sap:"樹液",sew:"縫い物をする",sin:"罪",sip:"一口飲む",sly:"ずる賢い",sob:"すすり泣く",sow:"種をまく",spa:"温泉",sue:"訴える",sum:"合計",tab:"つけにする",tag:"札をつける",tap:"蛇口",tar:"やに",tee:"目標",tin:"スズ",tip:"ヒント",toe:"つま先",tow:"牽引",tub:"たらい",tug:"力一杯引く",van:"先陣",vex:"いらいらさせる",vow:"誓約",wag:"しっぽを振る",wax:"ろう",web:"蜘蛛の巣",wee:"小便する",wet:"湿気",wig:"かつら",wit:"機知",woe:"悲痛",woo:"求婚する",wry:"ねじる",zip:"迅速に動く"};
+var words = (function keys(hash) {
+    var a = [];
+    for (var i in hash) {
+        a.push(i);
+    }
+    return a;
+})(jwords);
+var currentWords = [];
+var ansWord;
+var userAnsWord;
+var i;
+
+next();    // 開始
+
+</pre>
+<h2>tips</h2>
+<h3 id="tips1">[#1] ascii 文字だけを処理する</h3>
+<p>im に "ascii" を指定すると組み込みの ascii パーサがソース文字列を解釈するように設定できます．文字通り ascii 文字だけをそのままキーシンボルに対応させ，ひらがなを調べてローマ字に変換したりということをしないのでとても軽量です．</p>
+<p>英文・数字・記号などのような固定的に入力できるだけで問題ない文字列だけを登録する場合に使います．</p>
+<h3 id="tips2">[#2] Tsuikyo イベントハンドラ</h3>
+<p>Word ではなく Tsuikyo オブジェクトの listen() に関数を登録することで，全てのキー入力を処理するイベントハンドラとすることができます．これは素の keydown イベントに似ています．</p>
+<p>全体のイベントハンドラの中では this はその Tsuikyo オブジェクトを指します．</p>
+<p>また，その Tsuikyo オブジェクト下で listen 状態にあるワードオブジェクトの一覧を，Tsuikyo.words() で取得することができます．listen 状態にないワードは含まれません．このハンドラ内で処理を書くことで細かな制御が可能になります．</p>
+<p>ここでは複数ワードの判定をまとめたり，Esc キーを判別したりしています．</p>
+<h3 id="tips3">[#3] イベントフロー</h3>
+<p>keystroke イベント内で Word.stroke() してワードへ実際に打鍵を伝え，処理を済ませているので，自動的に呼ばれる Word.stroke() はキャンセルするべく false を返しています．</p>
+<p>また，Word.listen() で登録したイベントは明示的に Word.stroke() を呼び出した際にも呼ばれることに注意します．ここではそのことを使って表示文字の更新や打ち切り判定に関しては keystroked イベントで行っています（行儀いい感じじゃないですが例なので勘弁）．</p>
+<p>より詳しく書いておくと，Tsuikyo におけるイベント発生の流れは次の通りです．</p>
+<ol>
+	<li>
+		<h4>keydown イベントの発生</h4>
+		<p>ユーザの操作によって keydown イベントが発生します．</p>
+		<p>Tsuikyo 本体が listen 状態にあるときには Tsuikyo 内のイベントラッパーがこれを処理しますが，addEventListener によりラッパーを追加（not 上書き）しているので，別の keydown イベントハンドラが登録されている場合はそちらも期待通りトリガーされます．</p>
+		<p>この時点で物理キーを特定できた場合には，keypress イベントの受信を待たずに 3. に移ります．keypress を待たないのは，ブラウザによっては機能キーの類に対して keypress が発生しないことがあるためです．</p>
+		<p>最後に，Tsuikyo のオプション値 prevent が真である場合には，Tsuikyo はこの keydown イベントに対してあらゆる手段でデフォルト動作のキャンセルを試みます（event.preventDefault(), event.returnValue = false, event.keyCode = 0, ハンドラが false を返す）．これによりブラウザ本来のショートカットキー動作等のほとんどは無効化されます．</p>
+	</li>
+	<li>
+		<h4>keypress イベントの発生</h4>
+		<p>ブラウザや押されたキーにもよりますが，keydown に続けて（必ず keydown の後に） keypress イベントが発生します．</p>
+		<p>Tsuikyo は listen 状態においてはこの keypress にもラッパーを登録していますが，keydown と同様，他のハンドラの動作を妨害することはありません．</p>
+		<p>keydown 時に得られる情報によって物理キー特定に至らなかった場合は，この keypress の情報も参照して，物理キーを特定し，3. に移ります．keydown, keypress のどちらかで必ず Tsuikyo 内のイベント処理が走ることになります．</p>
+		<p>デフォルト動作のキャンセルは，keydown 時と同様に行います．</p>
+	</li>
+	<li>
+		<h4>keystroke イベント (Tsuikyo 全体のキーイベント）の発火</h4>
+		<p>keydown/keypress から得たキー情報を引数に，Tsuikyo.stroke() が呼ばれます（つまり Tsuikyo.stroke() を明示的に呼び出した場合は，ここから下が処理内容です）．</p>
+		<p>Tsuikyo.stroke() は Tsuikyo に登録したユーザハンドラから見えるイベントオブジェクトを作成し，Tsuikyo 本体のイベントハンドラが登録されていれば，それをコールバックします．このときイベントオブジェクトの type プロパティは "keystroke" です．</p>
+		<p>コールバックの返値が厳密に false であった場合（undefined 等は該当しないということ）には，この時点で処理を終えます．つまりこの場合，各ワードにキーイベントは伝わりません．また，キーシンボルが現在の im 設定にとって受理可能性のないものであった場合も，この時点で処理を終えます．</p>
+	</li>
+	<li>
+		<h4>keystroked イベント（Word 毎の打鍵結果イベント）の発火</h4>
+		<p>キーシンボルが現在の im 設定にとって受理可能性のある記号であった場合には，その Tsuikyo 下で listen 状態にある各ワードの Word.stroke() が呼び出されます（つまり Word.stroke() を明示的に呼び出した場合は，ここから下が処理内容です）．</p>
+		<p>Word.stroke() は先に打鍵の判定・状態更新を行い，結果を得てから，その結果を含めたイベントオブジェクトを作り，ワードに登録されているイベントハンドラがあれば，それをコールバックします．このときイベントオブジェクトの type プロパティは "keystroked" です．</p>
+	</li>
+</ol>
+</body>
+</html>

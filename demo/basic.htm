@@ -9,11 +9,7 @@
 	<link href="inc/prettify.css" type="text/css" rel="stylesheet" />
 	<link href="inc/base.css" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="inc/prettify.js"></script>
-	<script type="text/javascript" src="../lib/tsuikyo.util.js"></script>
-	<script type="text/javascript" src="../lib/tsuikyo.client.js"></script>
-	<script type="text/javascript" src="../lib/tsuikyo.layout.js"></script>
-	<script type="text/javascript" src="../lib/tsuikyo.im.js"></script>
-	<script type="text/javascript" src="../lib/tsuikyo.engine.js"></script>
+	<script type="text/javascript" src="./tsuikyo.js"></script>
 	<script type="text/javascript">//<![CDATA[
 window.onload = function(){
 	var code = document.getElementById("code").innerHTML;
@@ -56,7 +52,7 @@ window.onload = function(){
 </div>
 <h2>src</h2>
 <pre id="code" class="prettyprint lang-js">
-var ts = new Tsuikyo.engine();
+var ts = new Tsuikyo();
 var words = ["さじをなげる", "うらをかく", "えんぎをかつぐ", "おくのてをだす", "たなにあげる"];
 var i = -1;
 
