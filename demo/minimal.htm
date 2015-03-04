@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+	<title>Tsuikyo - Demo::Minimal</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta http-equiv="Content-Script-Type" content="text/javascript" />
+	<link href="inc/prettify.css" type="text/css" rel="stylesheet" />
+	<link href="inc/base.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="inc/prettify.js"></script>
+	<script type="text/javascript" src="./tsuikyo.js"></script>
+	<script type="text/javascript">//<![CDATA[
+window.onload = function(){
+	var code = document.getElementById("code").innerHTML;
+	var e = document.getElementById("kstr");
+	window._show = function(msg) {
+		e.innerHTML = msg + "&nbsp;";
+	};
+	eval(code);
+	if (/*@cc_on!@*/true) prettyPrint();
+};
+//]]>
+	</script>
+</head>
+<body>
+<h1>Tsuikyo - Demo::Minimal</h1>
+<p>最小構成．</p>
+<p>ブラウザのキーイベント周りを隠蔽しているので短く書けます．</p>
+<h2>test</h2>
+<p>「ついきょう」とお好きなローマ字で打てます．</p>
+<div id="game">
+	<p id="kstr">&nbsp;</p>
+</div>
+<h2>src</h2>
+<pre id="code" class="prettyprint lang-js">
+new Tsuikyo().make("ついきょう").listen(function() {
+    _show(this.kstr(this.kpos()));
+});
+</pre>
+</body>
+</html>

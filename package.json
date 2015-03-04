@@ -1,0 +1,28 @@
+{
+  "name": "tsuikyo",
+  "version": "0.1.0",
+  "description": "typing game library",
+  "main": "tsuikyo.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^1.4.1",
+    "webpack": "^1.5.3"
+  },
+  "scripts": {
+    "make": "tools/make_dist.bat",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomoemon/tsuikyo.git"
+  },
+  "author": "tomoemon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomoemon/tsuikyo/issues"
+  },
+  "homepage": "https://github.com/tomoemon/tsuikyo"
+}
