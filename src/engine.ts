@@ -8,17 +8,6 @@ import KeyStrokeEvent = Event.KeyStrokeEvent;
 import im = require('./input_method');
 import Option = require('./option');
 
-var engine, __defaultOpts;
-__defaultOpts = {
-    keyboard: "jp",
-    layout: "qwejp",
-    im: "roma",
-    flex: "flex",
-    eventRoot: window.document,
-    prevent: true,
-    strictParse: false,
-};
-
 export class EngineOption extends Option {
     public layout: string = "qwejp";
     public im: string = "roma";
@@ -39,17 +28,6 @@ export class Engine {
 
         // apply input settings
         this._initConfig();
-        this._overloadLayout();
-    }
-
-    layout(layout) {
-        if (!layout) {
-            return this._opts.layout;
-        } else {
-            this._opts.layout = layout;
-            this._initConfig();
-            this._overloadLayout();
-        }
     }
 
     listen(userCallback = undefined) {
@@ -181,6 +159,7 @@ export class Engine {
     private _initConfig() {
         this._im = new im.InputMethodFactory()[this._opts.im]();
         this._layout = Layout[this._opts.layout];
+        this._overloadLayout();
     }
 
     private _overloadLayout() {

@@ -46,10 +46,6 @@ class Tsuikyo {
         this.listen();
     }
 
-    public layout(_layout) {
-        return this.engine.layout(_layout);
-    }
-
     public listen(userCallback?) {
         this.keyStrokeObservable.subscribe(
             (e: Event.KeyStrokeEvent) => this.engine.stroke(e)

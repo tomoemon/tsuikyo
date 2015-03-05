@@ -88,9 +88,6 @@ var Tsuikyo = (function () {
         this.keyStrokeObservable = new Event.KeyStrokeObservable(option.keyboard, option.eventRoot, option.prevent);
         this.listen();
     }
-    Tsuikyo.prototype.layout = function (_layout) {
-        return this.engine.layout(_layout);
-    };
     Tsuikyo.prototype.listen = function (userCallback) {
         var _this = this;
         this.keyStrokeObservable.subscribe(function (e) { return _this.engine.stroke(e); });
@@ -373,16 +370,6 @@ var EngineState = __webpack_require__(9);
 var Event = __webpack_require__(2);
 var im = __webpack_require__(10);
 var Option = __webpack_require__(1);
-var engine, __defaultOpts;
-__defaultOpts = {
-    keyboard: "jp",
-    layout: "qwejp",
-    im: "roma",
-    flex: "flex",
-    eventRoot: window.document,
-    prevent: true,
-    strictParse: false
-};
 var EngineOption = (function (_super) {
     __extends(EngineOption, _super);
     function EngineOption(args) {
@@ -409,18 +396,7 @@ var Engine = (function () {
         this._opts = option;
         // apply input settings
         this._initConfig();
-        this._overloadLayout();
     }
-    Engine.prototype.layout = function (layout) {
-        if (!layout) {
-            return this._opts.layout;
-        }
-        else {
-            this._opts.layout = layout;
-            this._initConfig();
-            this._overloadLayout();
-        }
-    };
     Engine.prototype.listen = function (userCallback) {
         if (userCallback === void 0) { userCallback = undefined; }
         if (userCallback !== void 0) {
@@ -527,6 +503,7 @@ var Engine = (function () {
     Engine.prototype._initConfig = function () {
         this._im = new im.InputMethodFactory()[this._opts.im]();
         this._layout = Layout[this._opts.layout];
+        this._overloadLayout();
     };
     Engine.prototype._overloadLayout = function () {
         var layout, mix, a, k, i, j;
