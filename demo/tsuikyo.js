@@ -2,41 +2,41 @@ var Tsuikyo =
 /******/ (function(modules) { // webpackBootstrap
 /******/ // The module cache
 /******/ var installedModules = {};
-/******/
+
 /******/ // The require function
 /******/ function __webpack_require__(moduleId) {
-/******/
+
 /******/ // Check if module is in cache
 /******/ if(installedModules[moduleId])
 /******/ return installedModules[moduleId].exports;
-/******/
+
 /******/ // Create a new module (and put it into the cache)
 /******/ var module = installedModules[moduleId] = {
 /******/ exports: {},
 /******/ id: moduleId,
 /******/ loaded: false
 /******/ };
-/******/
+
 /******/ // Execute the module function
 /******/ modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
+
 /******/ // Flag the module as loaded
 /******/ module.loaded = true;
-/******/
+
 /******/ // Return the exports of the module
 /******/ return module.exports;
 /******/ }
-/******/
-/******/
+
+
 /******/ // expose the modules object (__webpack_modules__)
 /******/ __webpack_require__.m = modules;
-/******/
+
 /******/ // expose the module cache
 /******/ __webpack_require__.c = installedModules;
-/******/
+
 /******/ // __webpack_public_path__
 /******/ __webpack_require__.p = "";
-/******/
+
 /******/ // Load entry module and return exports
 /******/ return __webpack_require__(0);
 /******/ })
@@ -53,7 +53,7 @@ var __extends = this.__extends || function (d, b) {
 };
 var Option = __webpack_require__(1);
 var Event = __webpack_require__(2);
-var _e = __webpack_require__(3);
+var _e = __webpack_require__(6);
 var Engine = _e.Engine;
 var EngineOption = _e.EngineOption;
 var TsuikyoOption = (function (_super) {
@@ -116,7 +116,7 @@ module.exports = Tsuikyo;
 
 /***/ },
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 var Option = (function () {
     function Option() {
@@ -140,10 +140,9 @@ module.exports = Option;
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-var _u = __webpack_require__(4);
+var _u = __webpack_require__(3);
 var UserAgent = _u.UserAgent;
-var _b = __webpack_require__(5);
-var Util = __webpack_require__(6);
+var Util = __webpack_require__(5);
 var user_agent = UserAgent.instanciate();
 var KeyStrokeEvent = (function () {
     function KeyStrokeEvent(keyCode, // converted keyCode
@@ -185,8 +184,7 @@ var KeyStrokeObservable = (function () {
         this.callback = callback;
     };
     KeyStrokeObservable.prototype.dispose = function () {
-        this.callback = function () {
-        };
+        this.callback = function () { };
     };
     KeyStrokeObservable.prototype.wrapper = function (rawEvent) {
         var e = rawEvent || window.event;
@@ -252,7 +250,9 @@ var KeyStrokeObservable = (function () {
         // cancel default action
         e.returnValue = true;
         if (this.prevent) {
-            if (!(keyCode < 0 && (this.browser.isInternetExplorer() || this.browser.isChrome() || this.browser.isSafari()))) {
+            if (!(keyCode < 0 && (this.browser.isInternetExplorer()
+                || this.browser.isChrome()
+                || this.browser.isSafari()))) {
                 if (e.preventDefault instanceof Function) {
                     e.preventDefault();
                 }
@@ -357,17 +357,593 @@ var KeyEventObservable = (function () {
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
+var _b = __webpack_require__(4);
+var Browser = _b.Browser;
+var BrowserType = _b.BrowserType;
+var UserAgent = (function () {
+    function UserAgent(window, navigator) {
+        this.window = window;
+        this.navigator = navigator;
+        // detect the browser and os from UA
+        // modified jquery.client.js (public domain) : http://www.quirksmode.org/js/detect.html
+        this.browser = function () {
+            var ret = {}, useragent = this.navigator.userAgent, navigatorvendor = this.navigator.vendor, navigatorappversion = this.navigator.appVersion, d, bv, ds, dp, vs, btype, idx, c, i, fn;
+            d = [
+                {
+                    s: useragent,
+                    sub: "Chrome",
+                    id: "Chrome",
+                    btype: BrowserType.Chrome
+                }, {
+                    s: useragent,
+                    sub: "OmniWeb",
+                    ver: "OmniWeb/",
+                    id: "OmniWeb",
+                    btype: BrowserType.OmniWeb
+                }, {
+                    s: navigatorvendor,
+                    sub: "Apple",
+                    id: "Safari",
+                    ver: "Version",
+                    btype: BrowserType.Safari
+                }, {
+                    prop: this.window.opera,
+                    id: "Opera",
+                    ver: "Version",
+                    btype: BrowserType.Opera
+                }, {
+                    prop: this.window.opera,
+                    id: "Opera",
+                    btype: BrowserType.Opera
+                }, {
+                    s: navigatorvendor,
+                    sub: "iCab",
+                    id: "iCab",
+                    btype: BrowserType.iCab
+                }, {
+                    s: navigatorvendor,
+                    sub: "KDE",
+                    id: "Konqueror",
+                    btype: BrowserType.Konqueror
+                }, {
+                    s: useragent,
+                    sub: "Firefox",
+                    id: "Firefox",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: useragent,
+                    sub: "Minefield",
+                    id: "Firefox",
+                    ver: "Minefield",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: useragent,
+                    sub: "Phoenix",
+                    id: "Firefox",
+                    ver: "Phoenix",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: useragent,
+                    sub: "BonEcho",
+                    id: "Firefox",
+                    ver: "BonEcho",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: useragent,
+                    sub: "GranParadiso",
+                    id: "Firefox",
+                    ver: "GranParadiso",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: useragent,
+                    sub: "Shiretoko",
+                    id: "Firefox",
+                    ver: "Shiretoko",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: useragent,
+                    sub: "Namoroka",
+                    id: "Firefox",
+                    ver: "Namoroka",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: useragent,
+                    sub: "Lorentz",
+                    id: "Firefox",
+                    ver: "Lorentz",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: useragent,
+                    sub: "Iceweasel",
+                    id: "Firefox",
+                    ver: "Iceweasel",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: useragent,
+                    sub: "IceCat",
+                    id: "Firefox",
+                    ver: "IceCat",
+                    btype: BrowserType.Firefox
+                }, {
+                    s: navigatorvendor,
+                    sub: "Camino",
+                    id: "Camino",
+                    btype: BrowserType.Camino
+                }, {
+                    s: useragent,
+                    sub: "Netscape6",
+                    id: "Netscape6",
+                    btype: BrowserType.Netscape6
+                }, {
+                    s: useragent,
+                    sub: "Netscape",
+                    id: "Netscape6",
+                    btype: BrowserType.Netscape6
+                }, {
+                    s: useragent,
+                    sub: "MSIE",
+                    id: "IE",
+                    ver: "MSIE",
+                    btype: BrowserType.InternetExplorer
+                }, {
+                    s: useragent,
+                    sub: "Gecko",
+                    id: "Mozilla",
+                    ver: "rv",
+                    btype: BrowserType.Mozilla
+                }, {
+                    s: useragent,
+                    sub: "Mozilla",
+                    id: "Netscape",
+                    ver: "Mozilla",
+                    btype: BrowserType.Mozilla
+                }
+            ];
+            fn = function () {
+                return (c++ === 1) ? '' : '.';
+            };
+            for (i = 0; i < d.length; ++i) {
+                ds = d[i].s;
+                dp = d[i].prop;
+                if (ds && ds.indexOf(d[i].sub) !== -1 || dp) {
+                    vs = d[i].ver || d[i].id;
+                    btype = d[i].type;
+                    c = 0;
+                    if ((idx = useragent.indexOf(vs)) !== -1) {
+                        bv = parseFloat(useragent.slice(idx + vs.length + 1).replace(/\./g, fn));
+                        break;
+                    }
+                    else if ((idx = navigatorappversion.indexOf(vs)) !== -1) {
+                        bv = parseFloat(navigatorappversion.slice(idx + vs.length + 1).replace(/\./g, fn));
+                        break;
+                    }
+                    else {
+                        bv = -1;
+                    }
+                }
+            }
+            if (btype) {
+                return new Browser(btype, bv);
+            }
+            else {
+                return new Browser(BrowserType.Unknown, -1);
+            }
+        }();
+        this.os = function () {
+            var ret = {}, os, ds, idx, c, i, d, ua = this.navigator.userAgent, np = this.navigator.platform;
+            d = [
+                {
+                    s: np,
+                    sub: "Win",
+                    id: "Windows"
+                }, {
+                    s: np,
+                    sub: "Mac",
+                    id: "Mac"
+                }, {
+                    s: ua,
+                    sub: "iPhone",
+                    id: "iOS"
+                }, {
+                    s: np,
+                    sub: "Linux",
+                    id: "Unix"
+                }, {
+                    s: np,
+                    sub: "SunOS",
+                    id: "Unix"
+                }, {
+                    s: np,
+                    sub: "BSD",
+                    id: "Unix"
+                }, {
+                    s: ua,
+                    sub: "X11",
+                    id: "Unix"
+                }
+            ];
+            for (i = 0; i < d.length; ++i) {
+                ds = d[i].s;
+                if (ds && ds.indexOf(d[i].sub) !== -1) {
+                    os = d[i].id;
+                    break;
+                }
+            }
+            if (os) {
+                os = os.toLowerCase();
+                ret.name = os;
+                ret[os] = true;
+            }
+            else {
+                ret.name = "unknown";
+                ret.unknown = true;
+            }
+            return ret;
+        }();
+    }
+    UserAgent.instanciate = function () {
+        return new UserAgent(window, navigator);
+    };
+    UserAgent.prototype.getKeyCodeFilter = function (type) {
+        if (type === "jp") {
+            return new JpKeyCodeFilter(this);
+        }
+        throw new Error("unknown filter type: " + type);
+    };
+    return UserAgent;
+})();
+exports.UserAgent = UserAgent;
+var JpKeyCodeFilter = (function () {
+    function JpKeyCodeFilter(useragent) {
+        var browser = useragent.browser;
+        this.keypressTable = {
+            33: 49,
+            34: 50,
+            35: 51,
+            36: 52,
+            37: 53,
+            38: 54,
+            39: 55,
+            40: 56,
+            41: 57,
+            42: 186,
+            43: !browser.isFirefox() ? 187 :
+                function (shifted) {
+                    if (shifted) {
+                        return 187; // OEM_PLUS
+                    }
+                    else {
+                        return 107; // NUM_PLUS
+                    }
+                },
+            44: 188,
+            45: 189,
+            46: 190,
+            47: 191,
+            58: 186,
+            59: 187,
+            60: 188,
+            61: 180,
+            62: 190,
+            63: 191,
+            64: 192,
+            91: 219,
+            92: 220,
+            93: 221,
+            94: 222,
+            95: 226,
+            96: 192,
+            97: 65,
+            98: 66,
+            99: 67,
+            100: 68,
+            101: 69,
+            102: 70,
+            103: 71,
+            104: 72,
+            105: 73,
+            106: 74,
+            107: 75,
+            108: 76,
+            109: 77,
+            110: 78,
+            111: 79,
+            112: 80,
+            113: 81,
+            114: 82,
+            115: 83,
+            116: 84,
+            117: 85,
+            118: 86,
+            119: 87,
+            120: 88,
+            121: 89,
+            122: 90,
+            123: 219,
+            124: 220,
+            125: 221,
+            126: 222 // ~ -> OEM_7
+        };
+        this.keydownTable = (function (browser) {
+            var version = browser.getVersion();
+            var t = {};
+            switch (browser.getType()) {
+                case BrowserType.InternetExplorer:
+                    t[243] = 244; // HanZen
+                    break;
+                case BrowserType.Netscape6:
+                    // treat Netscape as Firefox
+                    version = 1;
+                // ** FALL THROUGH **
+                case BrowserType.Firefox:
+                    t[109] = 189; // -
+                    t[59] = 186; // :
+                    if (version >= 3) {
+                        t[107] = -1; // ;, num+ -> [keypress]
+                        t[243] = 244; // HanZen
+                    }
+                    else {
+                        t[61] = 187; // ;
+                        t[229] = 244; // HanZen, Henkan, Kana -> HanZen
+                    }
+                    break;
+                case BrowserType.Chrome:
+                    t[243] = 244; // HanZen
+                    t[229] = 244; // HanZen
+                    break;
+                case BrowserType.Safari:
+                    if (version >= 5) {
+                        t[229] = 244; // HanZen
+                    }
+                    else {
+                        t[229] = 244; // HanZen, Henkan, Kana -> HanZen
+                    }
+                    break;
+                case BrowserType.Opera:
+                    t[0] = 93; // menu
+                    t[42] = 106; // num*
+                    t[43] = 107; // num+
+                    t[47] = 111; // num/
+                    t[78] = -1; // n, numDot -> n
+                    t[208] = 240; // Eisu
+                    for (var i = 48; i <= 57; ++i) {
+                        t[i] = i; // num0 ~ num9 -> 0-9
+                    }
+                    if (version < 9.5) {
+                        t[44] = 188; // ,
+                        t[45] = 189; // -, ins, num- -> hyphen
+                        t[46] = 190; // dot, del -> dot
+                        t[47] = 191; // /
+                        t[58] = 186; // :
+                        t[59] = 187; // ;
+                        t[64] = 192; // @
+                        t[91] = 219; // [, LWin -> [
+                        t[92] = 220; // \|, \_, RWin -> \|
+                        t[93] = 221; // ]
+                        t[94] = 222; // ^
+                    }
+                    else {
+                        t[45] = 109; // num-, ins -> num-
+                        t[50] = -1; // @, 2, num2 -> [keypress]
+                        t[54] = -1; // ^, 6, num6 -> [keypress]
+                        t[59] = -1; // ;, : -> [keypress]
+                        t[109] = 189; // -
+                        t[219] = 219; // [, LWin, RWin -> [
+                        t[220] = 220; // \|, \_ -> \|
+                    }
+                    if (version < 10) {
+                        t[197] = 244; // HanZen, Henkan, Kana -> HanZen
+                    }
+                    else {
+                        t[210] = 242; // Kana
+                        t[211] = 244; // HanZen
+                        t[212] = 244; // HanZen
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return t;
+        })(browser);
+    }
+    JpKeyCodeFilter.prototype.keydown = function (rawCode, shifted) {
+        return this.keydownTable[rawCode] || rawCode;
+    };
+    JpKeyCodeFilter.prototype.keyup = function (rawCode, shifted) {
+        return this.keydownTable[rawCode] || rawCode;
+    };
+    JpKeyCodeFilter.prototype.keypress = function (rawCode, shifted) {
+        var c = this.keypressTable[c];
+        if (c instanceof Function) {
+            c = c(shifted);
+        }
+        return c || rawCode;
+    };
+    return JpKeyCodeFilter;
+})();
+//# sourceMappingURL=user_agent.js.map
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+(function (BrowserType) {
+    BrowserType[BrowserType["InternetExplorer"] = 0] = "InternetExplorer";
+    BrowserType[BrowserType["Chrome"] = 1] = "Chrome";
+    BrowserType[BrowserType["Camino"] = 2] = "Camino";
+    BrowserType[BrowserType["Firefox"] = 3] = "Firefox";
+    BrowserType[BrowserType["iCab"] = 4] = "iCab";
+    BrowserType[BrowserType["Konqueror"] = 5] = "Konqueror";
+    BrowserType[BrowserType["Mozilla"] = 6] = "Mozilla";
+    BrowserType[BrowserType["Netscape6"] = 7] = "Netscape6";
+    BrowserType[BrowserType["Opera"] = 8] = "Opera";
+    BrowserType[BrowserType["OmniWeb"] = 9] = "OmniWeb";
+    BrowserType[BrowserType["Safari"] = 10] = "Safari";
+    BrowserType[BrowserType["Unknown"] = 11] = "Unknown";
+})(exports.BrowserType || (exports.BrowserType = {}));
+var BrowserType = exports.BrowserType;
+var Browser = (function () {
+    function Browser(type, version) {
+        this.type = type;
+        this.version = version;
+    }
+    Browser.prototype.getType = function () {
+        return this.type;
+    };
+    Browser.prototype.getVersion = function () {
+        return this.version;
+    };
+    Browser.prototype.isFirefox = function () {
+        return this.type == BrowserType.Firefox;
+    };
+    Browser.prototype.isOpera = function () {
+        return this.type == BrowserType.Opera;
+    };
+    Browser.prototype.isChrome = function () {
+        return this.type == BrowserType.Chrome;
+    };
+    Browser.prototype.isSafari = function () {
+        return this.type == BrowserType.Safari;
+    };
+    Browser.prototype.isInternetExplorer = function () {
+        return this.type == BrowserType.InternetExplorer;
+    };
+    return Browser;
+})();
+exports.Browser = Browser;
+//# sourceMappingURL=user_agent.browser.js.map
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+var Util = (function () {
+    function Util() {
+    }
+    // make a prototype copy
+    Util.clone = function (source) {
+        var clone = function () { };
+        clone.prototype = source;
+        return new clone();
+    };
+    // make a prototype copy and extend it
+    Util.extend = function (source, extension) {
+        var i, ret = Util.clone(source);
+        for (i in extension) {
+            ret[i] = extension[i];
+        }
+        return ret;
+    };
+    // like Array.forEach
+    Util.each = function (a, fn) {
+        var i;
+        if (a instanceof Function) {
+            return;
+        }
+        else if (typeof a === "string") {
+            for (i = 0; i < a.length; ++i) {
+                if (fn(a.charAt(i), i)) {
+                    break; // avoid [] indexer for legacy browsers
+                }
+            }
+        }
+        else if (a instanceof Array) {
+            for (i = 0; i < a.length; ++i) {
+                if (fn(a[i], i)) {
+                    break;
+                }
+            }
+        }
+        else {
+            for (i in a) {
+                if (fn(a[i], i)) {
+                    break;
+                }
+            }
+        }
+        return a;
+    };
+    // like Array.filter
+    Util.filter = function (a, fn) {
+        var ret = [], i;
+        if (typeof a === "string") {
+            for (i = 0; i < a.length; ++i) {
+                // avoid [] indexer for legacy browsers
+                if (fn(a.charAt(i), i)) {
+                    ret.push(a.charAt(i));
+                }
+            }
+        }
+        else {
+            for (i = 0; i < a.length; ++i) {
+                if (fn(a[i], i)) {
+                    ret.push(a[i]);
+                }
+            }
+        }
+        return ret;
+    };
+    // like Array.map
+    Util.map = function (a, fn) {
+        var ret = [], i;
+        if (typeof a === "string") {
+            for (i = 0; i < a.length; ++i) {
+                ret.push(fn(a.charAt(i), i)); // avoid [] indexer for legacy browsers
+            }
+        }
+        else {
+            for (i = 0; i < a.length; ++i) {
+                ret.push(fn(a[i], i));
+            }
+        }
+        return ret;
+    };
+    Util.uniq = function (a) {
+        var ret = [], s = {}, i;
+        for (i = 0; i < a.length; ++i) {
+            if (!s[a[i]] && a[i] !== void 0)
+                ret.push(a[i]);
+            s[a[i]] = true;
+        }
+        return ret;
+    };
+    Util.find = function (a, v) {
+        var ret = false;
+        Util.each(a, function (e, i) {
+            if (typeof e === "object") {
+                if (arguments.callee(e, v) !== false) {
+                    ret = i;
+                    return true;
+                }
+            }
+            else {
+                if (e === v) {
+                    ret = i;
+                    return true;
+                }
+            }
+        });
+        return ret;
+    };
+    return Util;
+})();
+module.exports = Util;
+//# sourceMappingURL=util.js.map
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Util = __webpack_require__(6);
-var Layout = __webpack_require__(7);
-var Type = __webpack_require__(8);
-var EngineState = __webpack_require__(9);
-var Event = __webpack_require__(2);
+var Util = __webpack_require__(5);
+var Layout = __webpack_require__(8);
+var Type = __webpack_require__(9);
+var EngineState = __webpack_require__(7);
 var im = __webpack_require__(10);
 var Option = __webpack_require__(1);
 var EngineOption = (function (_super) {
@@ -402,15 +978,15 @@ var Engine = (function () {
         if (userCallback !== void 0) {
             this._userCallback = userCallback;
         }
-        if (this._state !== 8 /* LISTEN */) {
-            this._state = 8 /* LISTEN */;
+        if (this._state !== EngineState.LISTEN) {
+            this._state = EngineState.LISTEN;
         }
         return this;
     };
     Engine.prototype.sleep = function () {
-        if (this._state !== 7 /* SLEEP */) {
+        if (this._state !== EngineState.SLEEP) {
             // stop handling key events
-            this._state = 7 /* SLEEP */;
+            this._state = EngineState.SLEEP;
         }
         return this;
     };
@@ -435,6 +1011,7 @@ var Engine = (function () {
             }
         }
         if (e.sendable) {
+            // send the keystroke to all listening word
             for (var i = 0; i < this._activeWords.length; ++i) {
                 this._activeWords[i].stroke(e, test);
             }
@@ -469,6 +1046,7 @@ var Engine = (function () {
             e.key = key;
             e.allSyms = [key];
         }
+        // chk if the key is sendable
         for (var i = 0; i < e.allSyms.length; ++i) {
             if (keyCheck[e.allSyms[i]] !== void 0) {
                 e.sendable = true;
@@ -545,7 +1123,7 @@ var Word = (function () {
         // public:
         this.tag = null;
         // private:
-        this._state = 6 /* PREINIT */;
+        this._state = EngineState.PREINIT;
         this._ts = null;
         this._flex = "";
         this._userCallback = null;
@@ -569,7 +1147,7 @@ var Word = (function () {
             this._flex = flex;
             this._nodeSrc = tsuikyo._parse(src, tsuikyo._opts.strictParse);
             this._chkJunctionCache = [];
-            this._state = 7 /* SLEEP */;
+            this._state = EngineState.SLEEP;
         }
         this._nodes = this._linkNode(new Node(this._nodeSrc[0])); // entry point
         this._activeNode = this._selectNode();
@@ -584,14 +1162,14 @@ var Word = (function () {
         if (userCallback !== void 0) {
             this._userCallback = userCallback;
         }
-        if (this._state === 7 /* SLEEP */) {
-            this._state = 8 /* LISTEN */;
+        if (this._state === EngineState.SLEEP) {
+            this._state = EngineState.LISTEN;
             this._ts._addListenWord(this);
         }
         return this;
     };
     Word.prototype.sleep = function () {
-        this._state = 7 /* SLEEP */;
+        this._state = EngineState.SLEEP;
         this._ts._removeListenWord(this);
         return this;
     };
@@ -610,11 +1188,11 @@ var Word = (function () {
             ret: ret,
             test: !!test,
             type: "keystroked",
-            accept: ret > 0 /* MISS */,
-            miss: ret === 0 /* MISS */,
-            finish: ret >= 4 /* FINISH */
+            accept: ret > Type.MISS,
+            miss: ret === Type.MISS,
+            finish: ret >= Type.FINISH
         });
-        if (this._state === 8 /* LISTEN */ && this._userCallback instanceof Function) {
+        if (this._state === EngineState.LISTEN && this._userCallback instanceof Function) {
             this._userCallback(ee);
         }
         return ee;
@@ -705,7 +1283,7 @@ var Word = (function () {
             ret.push(this._nodes[i].accept(e, test));
         }
         retMax = Math.max.apply(null, ret);
-        if (!test && retMax !== -1 /* IGNORE */) {
+        if (!test && retMax !== Type.IGNORE) {
             // refresh the word state
             this._refresh(retMax);
             this._input.push(e);
@@ -714,23 +1292,23 @@ var Word = (function () {
     };
     Word.prototype._refresh = function (type) {
         var ns, newNodes, linkedNodes, i;
-        if (type !== 0 /* MISS */) {
+        if (type !== Type.MISS) {
             // get all appropriate nodes
             ns = Util.filter(this._nodes, function (node, i) {
                 return node.ret === type;
             });
         }
         switch (type) {
-            case 0 /* MISS */:
+            case Type.MISS:
                 ++this._missCount;
                 break;
-            case 1 /* INNER */:
+            case Type.INNER:
                 if (this._flex === "flex") {
                     this._nodes = ns;
                 }
                 this._activeNode = this._selectNode(ns);
                 break;
-            case 2 /* TRANSIT */:
+            case Type.TRANSIT:
                 if (this._flex === "flex") {
                     this._nodes = ns.slice(); // hard copy
                     newNodes = [];
@@ -738,7 +1316,7 @@ var Word = (function () {
                 else {
                     // include TYPE.INNER nodes as candidates to be active
                     newNodes = Util.filter(this._nodes, function (node, i) {
-                        return node.ret === 1 /* INNER */;
+                        return node.ret === Type.INNER;
                     });
                 }
                 for (i = 0; i < ns.length; ++i) {
@@ -749,12 +1327,12 @@ var Word = (function () {
                 }
                 this._activeNode = this._selectNode(newNodes);
                 break;
-            case 3 /* JUNCTION */:
-            case 4 /* FINISH */:
+            case Type.JUNCTION: // node transit and reach junction
+            case Type.FINISH:
                 this._nodes = this._linkNode(this._selectNode(ns));
                 this._activeNode = this._selectNode();
                 break;
-            case 5 /* FINISHED */:
+            case Type.FINISHED:
                 this._input.pop();
                 break;
             default:
@@ -804,21 +1382,11 @@ var Word = (function () {
             return a.slice(j);
         };
         filters = [
-            function (node) {
-                return node.pos;
-            },
-            function (node) {
-                return node.pos + node.d;
-            },
-            function (node) {
-                return node.pos + (node.dsum || node.d);
-            },
-            function (node) {
-                return node.i;
-            },
-            function (node) {
-                return -node.k.length;
-            }
+            function (node) { return node.pos; },
+            function (node) { return node.pos + node.d; },
+            function (node) { return node.pos + (node.dsum || node.d); },
+            function (node) { return node.i; },
+            function (node) { return -node.k.length; }
         ];
         ns = ns || this._nodes;
         if (ns.length > 1) {
@@ -902,31 +1470,31 @@ var Node = (function () {
                 if (this.k.length === ++this.i) {
                     if (this.isJunction) {
                         if (this.tailPos === this.pos + this.d) {
-                            this.ret = 4 /* FINISH */;
+                            this.ret = Type.FINISH;
                         }
                         else {
-                            this.ret = 3 /* JUNCTION */;
+                            this.ret = Type.JUNCTION;
                         }
                     }
                     else {
-                        this.ret = 2 /* TRANSIT */;
+                        this.ret = Type.TRANSIT;
                     }
                 }
                 else {
-                    this.ret = 1 /* INNER */;
+                    this.ret = Type.INNER;
                 }
                 test && --this.i;
             }
             else if (!this.k.length) {
                 // end point always returns TYPE.FINISHED
-                this.ret = 5 /* FINISHED */;
+                this.ret = Type.FINISHED;
             }
             else {
-                this.ret = 0 /* MISS */;
+                this.ret = Type.MISS;
             }
         }
         else {
-            this.ret = -1 /* IGNORE */;
+            this.ret = Type.IGNORE;
         }
         return this.ret;
     };
@@ -955,614 +1523,23 @@ var Node = (function () {
 //# sourceMappingURL=engine.js.map
 
 /***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-var _b = __webpack_require__(5);
-var Browser = _b.Browser;
-var BrowserType = _b.BrowserType;
-var UserAgent = (function () {
-    function UserAgent(window, navigator) {
-        this.window = window;
-        this.navigator = navigator;
-        // detect the browser and os from UA
-        // modified jquery.client.js (public domain) : http://www.quirksmode.org/js/detect.html
-        this.browser = function () {
-            var ret = {}, useragent = this.navigator.userAgent, navigatorvendor = this.navigator.vendor, navigatorappversion = this.navigator.appVersion, d, bv, ds, dp, vs, btype, idx, c, i, fn;
-            d = [
-                {
-                    s: useragent,
-                    sub: "Chrome",
-                    id: "Chrome",
-                    btype: 1 /* Chrome */
-                },
-                {
-                    s: useragent,
-                    sub: "OmniWeb",
-                    ver: "OmniWeb/",
-                    id: "OmniWeb",
-                    btype: 9 /* OmniWeb */
-                },
-                {
-                    s: navigatorvendor,
-                    sub: "Apple",
-                    id: "Safari",
-                    ver: "Version",
-                    btype: 10 /* Safari */
-                },
-                {
-                    prop: this.window.opera,
-                    id: "Opera",
-                    ver: "Version",
-                    btype: 8 /* Opera */
-                },
-                {
-                    prop: this.window.opera,
-                    id: "Opera",
-                    btype: 8 /* Opera */
-                },
-                {
-                    s: navigatorvendor,
-                    sub: "iCab",
-                    id: "iCab",
-                    btype: 4 /* iCab */
-                },
-                {
-                    s: navigatorvendor,
-                    sub: "KDE",
-                    id: "Konqueror",
-                    btype: 5 /* Konqueror */
-                },
-                {
-                    s: useragent,
-                    sub: "Firefox",
-                    id: "Firefox",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: useragent,
-                    sub: "Minefield",
-                    id: "Firefox",
-                    ver: "Minefield",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: useragent,
-                    sub: "Phoenix",
-                    id: "Firefox",
-                    ver: "Phoenix",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: useragent,
-                    sub: "BonEcho",
-                    id: "Firefox",
-                    ver: "BonEcho",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: useragent,
-                    sub: "GranParadiso",
-                    id: "Firefox",
-                    ver: "GranParadiso",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: useragent,
-                    sub: "Shiretoko",
-                    id: "Firefox",
-                    ver: "Shiretoko",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: useragent,
-                    sub: "Namoroka",
-                    id: "Firefox",
-                    ver: "Namoroka",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: useragent,
-                    sub: "Lorentz",
-                    id: "Firefox",
-                    ver: "Lorentz",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: useragent,
-                    sub: "Iceweasel",
-                    id: "Firefox",
-                    ver: "Iceweasel",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: useragent,
-                    sub: "IceCat",
-                    id: "Firefox",
-                    ver: "IceCat",
-                    btype: 3 /* Firefox */
-                },
-                {
-                    s: navigatorvendor,
-                    sub: "Camino",
-                    id: "Camino",
-                    btype: 2 /* Camino */
-                },
-                {
-                    s: useragent,
-                    sub: "Netscape6",
-                    id: "Netscape6",
-                    btype: 7 /* Netscape6 */
-                },
-                {
-                    s: useragent,
-                    sub: "Netscape",
-                    id: "Netscape6",
-                    btype: 7 /* Netscape6 */
-                },
-                {
-                    s: useragent,
-                    sub: "MSIE",
-                    id: "IE",
-                    ver: "MSIE",
-                    btype: 0 /* InternetExplorer */
-                },
-                {
-                    s: useragent,
-                    sub: "Gecko",
-                    id: "Mozilla",
-                    ver: "rv",
-                    btype: 6 /* Mozilla */
-                },
-                {
-                    s: useragent,
-                    sub: "Mozilla",
-                    id: "Netscape",
-                    ver: "Mozilla",
-                    btype: 6 /* Mozilla */
-                }
-            ];
-            fn = function () {
-                return (c++ === 1) ? '' : '.';
-            };
-            for (i = 0; i < d.length; ++i) {
-                ds = d[i].s;
-                dp = d[i].prop;
-                if (ds && ds.indexOf(d[i].sub) !== -1 || dp) {
-                    vs = d[i].ver || d[i].id;
-                    btype = d[i].type;
-                    c = 0;
-                    if ((idx = useragent.indexOf(vs)) !== -1) {
-                        bv = parseFloat(useragent.slice(idx + vs.length + 1).replace(/\./g, fn));
-                        break;
-                    }
-                    else if ((idx = navigatorappversion.indexOf(vs)) !== -1) {
-                        bv = parseFloat(navigatorappversion.slice(idx + vs.length + 1).replace(/\./g, fn));
-                        break;
-                    }
-                    else {
-                        bv = -1;
-                    }
-                }
-            }
-            if (btype) {
-                return new Browser(btype, bv);
-            }
-            else {
-                return new Browser(11 /* Unknown */, -1);
-            }
-        }();
-        this.os = function () {
-            var ret = {}, os, ds, idx, c, i, d, ua = this.navigator.userAgent, np = this.navigator.platform;
-            d = [
-                {
-                    s: np,
-                    sub: "Win",
-                    id: "Windows"
-                },
-                {
-                    s: np,
-                    sub: "Mac",
-                    id: "Mac"
-                },
-                {
-                    s: ua,
-                    sub: "iPhone",
-                    id: "iOS"
-                },
-                {
-                    s: np,
-                    sub: "Linux",
-                    id: "Unix"
-                },
-                {
-                    s: np,
-                    sub: "SunOS",
-                    id: "Unix"
-                },
-                {
-                    s: np,
-                    sub: "BSD",
-                    id: "Unix"
-                },
-                {
-                    s: ua,
-                    sub: "X11",
-                    id: "Unix"
-                }
-            ];
-            for (i = 0; i < d.length; ++i) {
-                ds = d[i].s;
-                if (ds && ds.indexOf(d[i].sub) !== -1) {
-                    os = d[i].id;
-                    break;
-                }
-            }
-            if (os) {
-                os = os.toLowerCase();
-                ret.name = os;
-                ret[os] = true;
-            }
-            else {
-                ret.name = "unknown";
-                ret.unknown = true;
-            }
-            return ret;
-        }();
-    }
-    UserAgent.instanciate = function () {
-        return new UserAgent(window, navigator);
-    };
-    UserAgent.prototype.getKeyCodeFilter = function (type) {
-        if (type === "jp") {
-            return new JpKeyCodeFilter(this);
-        }
-        throw new Error("unknown filter type: " + type);
-    };
-    return UserAgent;
-})();
-exports.UserAgent = UserAgent;
-var JpKeyCodeFilter = (function () {
-    function JpKeyCodeFilter(useragent) {
-        var browser = useragent.browser;
-        this.keypressTable = {
-            33: 49,
-            34: 50,
-            35: 51,
-            36: 52,
-            37: 53,
-            38: 54,
-            39: 55,
-            40: 56,
-            41: 57,
-            42: 186,
-            43: !browser.isFirefox() ? 187 : function (shifted) {
-                if (shifted) {
-                    return 187; // OEM_PLUS
-                }
-                else {
-                    return 107; // NUM_PLUS
-                }
-            },
-            44: 188,
-            45: 189,
-            46: 190,
-            47: 191,
-            58: 186,
-            59: 187,
-            60: 188,
-            61: 180,
-            62: 190,
-            63: 191,
-            64: 192,
-            91: 219,
-            92: 220,
-            93: 221,
-            94: 222,
-            95: 226,
-            96: 192,
-            97: 65,
-            98: 66,
-            99: 67,
-            100: 68,
-            101: 69,
-            102: 70,
-            103: 71,
-            104: 72,
-            105: 73,
-            106: 74,
-            107: 75,
-            108: 76,
-            109: 77,
-            110: 78,
-            111: 79,
-            112: 80,
-            113: 81,
-            114: 82,
-            115: 83,
-            116: 84,
-            117: 85,
-            118: 86,
-            119: 87,
-            120: 88,
-            121: 89,
-            122: 90,
-            123: 219,
-            124: 220,
-            125: 221,
-            126: 222 // ~ -> OEM_7
-        };
-        this.keydownTable = (function (browser) {
-            var version = browser.getVersion();
-            var t = {};
-            switch (browser.getType()) {
-                case 0 /* InternetExplorer */:
-                    t[243] = 244; // HanZen
-                    break;
-                case 7 /* Netscape6 */:
-                    // treat Netscape as Firefox
-                    version = 1;
-                case 3 /* Firefox */:
-                    t[109] = 189; // -
-                    t[59] = 186; // :
-                    if (version >= 3) {
-                        t[107] = -1; // ;, num+ -> [keypress]
-                        t[243] = 244; // HanZen
-                    }
-                    else {
-                        t[61] = 187; // ;
-                        t[229] = 244; // HanZen, Henkan, Kana -> HanZen
-                    }
-                    break;
-                case 1 /* Chrome */:
-                    t[243] = 244; // HanZen
-                    t[229] = 244; // HanZen
-                    break;
-                case 10 /* Safari */:
-                    if (version >= 5) {
-                        t[229] = 244; // HanZen
-                    }
-                    else {
-                        t[229] = 244; // HanZen, Henkan, Kana -> HanZen
-                    }
-                    break;
-                case 8 /* Opera */:
-                    t[0] = 93; // menu
-                    t[42] = 106; // num*
-                    t[43] = 107; // num+
-                    t[47] = 111; // num/
-                    t[78] = -1; // n, numDot -> n
-                    t[208] = 240; // Eisu
-                    for (var i = 48; i <= 57; ++i) {
-                        t[i] = i; // num0 ~ num9 -> 0-9
-                    }
-                    if (version < 9.5) {
-                        t[44] = 188; // ,
-                        t[45] = 189; // -, ins, num- -> hyphen
-                        t[46] = 190; // dot, del -> dot
-                        t[47] = 191; // /
-                        t[58] = 186; // :
-                        t[59] = 187; // ;
-                        t[64] = 192; // @
-                        t[91] = 219; // [, LWin -> [
-                        t[92] = 220; // \|, \_, RWin -> \|
-                        t[93] = 221; // ]
-                        t[94] = 222; // ^
-                    }
-                    else {
-                        t[45] = 109; // num-, ins -> num-
-                        t[50] = -1; // @, 2, num2 -> [keypress]
-                        t[54] = -1; // ^, 6, num6 -> [keypress]
-                        t[59] = -1; // ;, : -> [keypress]
-                        t[109] = 189; // -
-                        t[219] = 219; // [, LWin, RWin -> [
-                        t[220] = 220; // \|, \_ -> \|
-                    }
-                    if (version < 10) {
-                        t[197] = 244; // HanZen, Henkan, Kana -> HanZen
-                    }
-                    else {
-                        t[210] = 242; // Kana
-                        t[211] = 244; // HanZen
-                        t[212] = 244; // HanZen
-                    }
-                    break;
-                default:
-                    break;
-            }
-            return t;
-        })(browser);
-    }
-    JpKeyCodeFilter.prototype.keydown = function (rawCode, shifted) {
-        return this.keydownTable[rawCode] || rawCode;
-    };
-    JpKeyCodeFilter.prototype.keyup = function (rawCode, shifted) {
-        return this.keydownTable[rawCode] || rawCode;
-    };
-    JpKeyCodeFilter.prototype.keypress = function (rawCode, shifted) {
-        var c = this.keypressTable[c];
-        if (c instanceof Function) {
-            c = c(shifted);
-        }
-        return c || rawCode;
-    };
-    return JpKeyCodeFilter;
-})();
-//# sourceMappingURL=user_agent.js.map
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-(function (BrowserType) {
-    BrowserType[BrowserType["InternetExplorer"] = 0] = "InternetExplorer";
-    BrowserType[BrowserType["Chrome"] = 1] = "Chrome";
-    BrowserType[BrowserType["Camino"] = 2] = "Camino";
-    BrowserType[BrowserType["Firefox"] = 3] = "Firefox";
-    BrowserType[BrowserType["iCab"] = 4] = "iCab";
-    BrowserType[BrowserType["Konqueror"] = 5] = "Konqueror";
-    BrowserType[BrowserType["Mozilla"] = 6] = "Mozilla";
-    BrowserType[BrowserType["Netscape6"] = 7] = "Netscape6";
-    BrowserType[BrowserType["Opera"] = 8] = "Opera";
-    BrowserType[BrowserType["OmniWeb"] = 9] = "OmniWeb";
-    BrowserType[BrowserType["Safari"] = 10] = "Safari";
-    BrowserType[BrowserType["Unknown"] = 11] = "Unknown";
-})(exports.BrowserType || (exports.BrowserType = {}));
-var BrowserType = exports.BrowserType;
-var Browser = (function () {
-    function Browser(type, version) {
-        this.type = type;
-        this.version = version;
-    }
-    Browser.prototype.getType = function () {
-        return this.type;
-    };
-    Browser.prototype.getVersion = function () {
-        return this.version;
-    };
-    Browser.prototype.isFirefox = function () {
-        return this.type == 3 /* Firefox */;
-    };
-    Browser.prototype.isOpera = function () {
-        return this.type == 8 /* Opera */;
-    };
-    Browser.prototype.isChrome = function () {
-        return this.type == 1 /* Chrome */;
-    };
-    Browser.prototype.isSafari = function () {
-        return this.type == 10 /* Safari */;
-    };
-    Browser.prototype.isInternetExplorer = function () {
-        return this.type == 0 /* InternetExplorer */;
-    };
-    return Browser;
-})();
-exports.Browser = Browser;
-//# sourceMappingURL=user_agent.browser.js.map
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-var Util = (function () {
-    function Util() {
-    }
-    // make a prototype copy
-    Util.clone = function (source) {
-        var clone = function () {
-        };
-        clone.prototype = source;
-        return new clone();
-    };
-    // make a prototype copy and extend it
-    Util.extend = function (source, extension) {
-        var i, ret = Util.clone(source);
-        for (i in extension) {
-            ret[i] = extension[i];
-        }
-        return ret;
-    };
-    // like Array.forEach
-    Util.each = function (a, fn) {
-        var i;
-        if (a instanceof Function) {
-            return;
-        }
-        else if (typeof a === "string") {
-            for (i = 0; i < a.length; ++i) {
-                if (fn(a.charAt(i), i)) {
-                    break;
-                }
-            }
-        }
-        else if (a instanceof Array) {
-            for (i = 0; i < a.length; ++i) {
-                if (fn(a[i], i)) {
-                    break;
-                }
-            }
-        }
-        else {
-            for (i in a) {
-                if (fn(a[i], i)) {
-                    break;
-                }
-            }
-        }
-        return a;
-    };
-    // like Array.filter
-    Util.filter = function (a, fn) {
-        var ret = [], i;
-        if (typeof a === "string") {
-            for (i = 0; i < a.length; ++i) {
-                // avoid [] indexer for legacy browsers
-                if (fn(a.charAt(i), i)) {
-                    ret.push(a.charAt(i));
-                }
-            }
-        }
-        else {
-            for (i = 0; i < a.length; ++i) {
-                if (fn(a[i], i)) {
-                    ret.push(a[i]);
-                }
-            }
-        }
-        return ret;
-    };
-    // like Array.map
-    Util.map = function (a, fn) {
-        var ret = [], i;
-        if (typeof a === "string") {
-            for (i = 0; i < a.length; ++i) {
-                ret.push(fn(a.charAt(i), i)); // avoid [] indexer for legacy browsers
-            }
-        }
-        else {
-            for (i = 0; i < a.length; ++i) {
-                ret.push(fn(a[i], i));
-            }
-        }
-        return ret;
-    };
-    Util.uniq = function (a) {
-        var ret = [], s = {}, i;
-        for (i = 0; i < a.length; ++i) {
-            if (!s[a[i]] && a[i] !== void 0)
-                ret.push(a[i]);
-            s[a[i]] = true;
-        }
-        return ret;
-    };
-    Util.find = function (a, v) {
-        var ret = false;
-        Util.each(a, function (e, i) {
-            if (typeof e === "object") {
-                if (arguments.callee(e, v) !== false) {
-                    ret = i;
-                    return true;
-                }
-            }
-            else {
-                if (e === v) {
-                    ret = i;
-                    return true;
-                }
-            }
-        });
-        return ret;
-    };
-    return Util;
-})();
-module.exports = Util;
-//# sourceMappingURL=util.js.map
-
-/***/ },
 /* 7 */
+/***/ function(module, exports) {
+
+var EngineState;
+(function (EngineState) {
+    EngineState[EngineState["PREINIT"] = 6] = "PREINIT";
+    EngineState[EngineState["SLEEP"] = 7] = "SLEEP";
+    EngineState[EngineState["LISTEN"] = 8] = "LISTEN";
+})(EngineState || (EngineState = {}));
+module.exports = EngineState;
+//# sourceMappingURL=engine.state.js.map
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-var Util = __webpack_require__(6);
+var Util = __webpack_require__(5);
 var Layout = (function () {
     function Layout() {
     }
@@ -1763,8 +1740,8 @@ module.exports = Layout;
 //# sourceMappingURL=layout.js.map
 
 /***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/* 9 */
+/***/ function(module, exports) {
 
 var Type;
 (function (Type) {
@@ -1780,24 +1757,11 @@ module.exports = Type;
 //# sourceMappingURL=engine.type.js.map
 
 /***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-var EngineState;
-(function (EngineState) {
-    EngineState[EngineState["PREINIT"] = 6] = "PREINIT";
-    EngineState[EngineState["SLEEP"] = 7] = "SLEEP";
-    EngineState[EngineState["LISTEN"] = 8] = "LISTEN";
-})(EngineState || (EngineState = {}));
-module.exports = EngineState;
-//# sourceMappingURL=engine.state.js.map
-
-/***/ },
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-var Util = __webpack_require__(6);
-var _u = __webpack_require__(4);
+var Util = __webpack_require__(5);
+var _u = __webpack_require__(3);
 var UserAgent = _u.UserAgent;
 var user_agent = UserAgent.instanciate();
 function addRule(r, i, j, rules, reach, ret) {
@@ -1860,6 +1824,7 @@ function parse(src, table, ruleMaxLength, strictParse) {
         }
         ret[i] = rules;
     }
+    // check if any dead-end
     for (i = 0; i < reach.length - 1; ++i) {
         // if dead-end exists
         if (reach[i] && (!ret[i] || !ret[i].length)) {
@@ -1867,6 +1832,7 @@ function parse(src, table, ruleMaxLength, strictParse) {
                 throw new Error("parse error");
             }
             else {
+                // pass through it
                 for (j = 0; j < reach[i].length; ++j) {
                     ++reach[i][j].d;
                     reach[i][j].n = ret[i + 1];
@@ -2246,9 +2212,9 @@ var InputMethodFactory = (function () {
             src = _this.asciiFix(src);
             src.replace(_this.asciiExp, function (m) {
                 ret.push([{
-                    k: [m],
-                    d: 1
-                }]);
+                        k: [m],
+                        d: 1
+                    }]);
             });
             Util.each(ret, function (e, i) {
                 if (i + 1 < ret.length) {
@@ -2434,10 +2400,10 @@ var InputMethodFactory = (function () {
                     keys = keys.slice();
                     keys[last] = "_" + tail + d.k;
                     ret = [ret, {
-                        m: "add",
-                        i: str + d.h,
-                        v: { k: keys }
-                    }];
+                            m: "add",
+                            i: str + d.h,
+                            v: { k: keys }
+                        }];
                 }
             }
             return ret;
@@ -2480,4 +2446,4 @@ exports.InputMethod = InputMethod;
 //# sourceMappingURL=input_method.js.map
 
 /***/ }
-/******/ ])
+/******/ ]);
