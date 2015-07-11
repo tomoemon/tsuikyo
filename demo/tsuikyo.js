@@ -60,23 +60,70 @@ var TsuikyoOption = (function (_super) {
     __extends(TsuikyoOption, _super);
     function TsuikyoOption(args) {
         _super.call(this);
-        // readonly な property を使いたいが、EcmaScript5 を前提にしなければいけない
-        // →IE6,7,8 で使えない
-        this.keyboard = "jp";
-        this.eventRoot = window.document;
-        this.layout = "qwejp";
-        this.im = "roma";
-        this.flex = "flex";
-        this.prevent = true;
-        this.strictParse = false;
+        this._keyboard = "jp";
+        this._eventRoot = window.document;
+        this._layout = "qwejp";
+        this._im = "roma";
+        this._flex = "flex";
+        this._prevent = true;
+        this._strictParse = false;
         this.parse(args);
     }
+    Object.defineProperty(TsuikyoOption.prototype, "keyboard", {
+        get: function () {
+            return this._keyboard;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TsuikyoOption.prototype, "eventRoot", {
+        get: function () {
+            return this._eventRoot;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TsuikyoOption.prototype, "layout", {
+        get: function () {
+            return this._layout;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TsuikyoOption.prototype, "im", {
+        get: function () {
+            return this._im;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TsuikyoOption.prototype, "flex", {
+        get: function () {
+            return this._flex;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TsuikyoOption.prototype, "prevent", {
+        get: function () {
+            return this._prevent;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TsuikyoOption.prototype, "strictParse", {
+        get: function () {
+            return this._strictParse;
+        },
+        enumerable: true,
+        configurable: true
+    });
     TsuikyoOption.prototype.getEngineOption = function () {
         return new EngineOption({
-            layout: this.layout,
-            im: this.im,
-            flex: this.flex,
-            strictParse: this.strictParse
+            layout: this._layout,
+            im: this._im,
+            flex: this._flex,
+            strictParse: this._strictParse
         });
     };
     return TsuikyoOption;
@@ -124,7 +171,7 @@ var Option = (function () {
     Option.prototype.parse = function (args) {
         for (var key in args) {
             if (key in this) {
-                this[key] = args[key];
+                this["_" + key] = args[key];
             }
             else {
                 throw new Error("unknown option: '" + key + "'");
@@ -950,12 +997,40 @@ var EngineOption = (function (_super) {
     __extends(EngineOption, _super);
     function EngineOption(args) {
         _super.call(this);
-        this.layout = "qwejp";
-        this.im = "roma";
-        this.flex = "flex";
-        this.strictParse = false;
+        this._layout = "qwejp";
+        this._im = "roma";
+        this._flex = "flex";
+        this._strictParse = false;
         this.parse(args);
     }
+    Object.defineProperty(EngineOption.prototype, "layout", {
+        get: function () {
+            return this._layout;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(EngineOption.prototype, "im", {
+        get: function () {
+            return this._im;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(EngineOption.prototype, "flex", {
+        get: function () {
+            return this._flex;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(EngineOption.prototype, "strictParse", {
+        get: function () {
+            return this._strictParse;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return EngineOption;
 })(Option);
 exports.EngineOption = EngineOption;

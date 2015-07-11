@@ -9,10 +9,23 @@ import im = require('./input_method');
 import Option = require('./option');
 
 export class EngineOption extends Option {
-    public layout: string = "qwejp";
-    public im: string = "roma";
-    public flex: string = "flex";
-    public strictParse: boolean = false;
+    private _layout: string = "qwejp";
+    private _im: string = "roma";
+    private _flex: string = "flex";
+    private _strictParse: boolean = false;
+
+    get layout() {
+        return this._layout;
+    }
+    get im() {
+        return this._im;
+    }
+    get flex() {
+        return this._flex;
+    }
+    get strictParse() {
+        return this._strictParse;
+    }
 
     constructor(args: any) {
         super();

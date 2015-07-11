@@ -6,16 +6,36 @@ import EngineOption = _e.EngineOption;
 
 
 class TsuikyoOption extends Option {
-    // readonly な property を使いたいが、EcmaScript5 を前提にしなければいけない
-    // →IE6,7,8 で使えない
-    public keyboard: string = "jp";
-    public eventRoot: any = window.document;
+    private _keyboard: string = "jp";
+    private _eventRoot: any = window.document;
 
-    public layout: string = "qwejp";
-    public im: string = "roma";
-    public flex: string = "flex";
-    public prevent: boolean = true;
-    public strictParse: boolean = false;
+    private _layout: string = "qwejp";
+    private _im: string = "roma";
+    private _flex: string = "flex";
+    private _prevent: boolean = true;
+    private _strictParse: boolean = false;
+
+    get keyboard() {
+        return this._keyboard;
+    }
+    get eventRoot() {
+        return this._eventRoot;
+    }
+    get layout() {
+        return this._layout;
+    }
+    get im() {
+        return this._im;
+    }
+    get flex() {
+        return this._flex;
+    }
+    get prevent() {
+        return this._prevent;
+    }
+    get strictParse() {
+        return this._strictParse;
+    }
 
     constructor(args: any) {
         super();
@@ -24,10 +44,10 @@ class TsuikyoOption extends Option {
 
     getEngineOption(): EngineOption {
         return new EngineOption({
-            layout: this.layout,
-            im: this.im,
-            flex: this.flex,
-            strictParse: this.strictParse
+            layout: this._layout,
+            im: this._im,
+            flex: this._flex,
+            strictParse: this._strictParse
         });
     }
 }
