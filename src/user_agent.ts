@@ -23,130 +23,33 @@ export class UserAgent {
                 sub: "Chrome",
                 id: "Chrome",
                 btype: BrowserType.Chrome
-            }, {
-                s: useragent,
-                sub: "OmniWeb",
-                ver: "OmniWeb/",
-                id: "OmniWeb",
-                btype: BrowserType.OmniWeb
-            }, {
+            },
+            {
                 s: navigatorvendor,
                 sub: "Apple",
                 id: "Safari",
                 ver: "Version",
                 btype: BrowserType.Safari
-            }, {        // Opera 10+
+            },
+            {        // Opera 10+
                 prop: this.window.opera,
                 id: "Opera",
                 ver: "Version",
                 btype: BrowserType.Opera
-            }, {        // Opera -9
-                prop: this.window.opera,
-                id: "Opera",
-                btype: BrowserType.Opera
-            }, {
-                s: navigatorvendor,
-                sub: "iCab",
-                id: "iCab",
-                btype: BrowserType.iCab
-            }, {
-                s: navigatorvendor,
-                sub: "KDE",
-                id: "Konqueror",
-                btype: BrowserType.Konqueror
-            }, {
+            },
+            {
                 s: useragent,
                 sub: "Firefox",
                 id: "Firefox",
                 btype: BrowserType.Firefox
-            }, {        // Firefox trunk build
-                s: useragent,
-                sub: "Minefield",
-                id: "Firefox",
-                ver: "Minefield",
-                btype: BrowserType.Firefox
-            }, {        // Firefox 1 branch build
-                s: useragent,
-                sub: "Phoenix",
-                id: "Firefox",
-                ver: "Phoenix",
-                btype: BrowserType.Firefox
-            }, {        // Firefox 2 branch build
-                s: useragent,
-                sub: "BonEcho",
-                id: "Firefox",
-                ver: "BonEcho",
-                btype: BrowserType.Firefox
-            }, {        // Firefox 3 branch build
-                s: useragent,
-                sub: "GranParadiso",
-                id: "Firefox",
-                ver: "GranParadiso",
-                btype: BrowserType.Firefox
-            }, {        // Firefox 3.5 branch build
-                s: useragent,
-                sub: "Shiretoko",
-                id: "Firefox",
-                ver: "Shiretoko",
-                btype: BrowserType.Firefox
-            }, {        // Firefox 3.6 branch build
-                s: useragent,
-                sub: "Namoroka",
-                id: "Firefox",
-                ver: "Namoroka",
-                btype: BrowserType.Firefox
-            }, {        // Firefox 3.7 branch build
-                s: useragent,
-                sub: "Lorentz",
-                id: "Firefox",
-                ver: "Lorentz",
-                btype: BrowserType.Firefox
-            }, {        // Firefox for Debian
-                s: useragent,
-                sub: "Iceweasel",
-                id: "Firefox",
-                ver: "Iceweasel",
-                btype: BrowserType.Firefox
-            }, {        // Firefox in GNU
-                s: useragent,
-                sub: "IceCat",
-                id: "Firefox",
-                ver: "IceCat",
-                btype: BrowserType.Firefox
-            }, {
-                s: navigatorvendor,
-                sub: "Camino",
-                id: "Camino",
-                btype: BrowserType.Camino
-            }, {        // for Netscape 6
-                s: useragent,
-                sub: "Netscape6",
-                id: "Netscape6",
-                btype: BrowserType.Netscape6
-            }, {        // for newer Netscapes (7-)
-                s: useragent,
-                sub: "Netscape",
-                id: "Netscape6",
-                btype: BrowserType.Netscape6
-            }, {
+            },
+            {
                 s: useragent,
                 sub: "MSIE",
                 id: "IE",
                 ver: "MSIE",
                 btype: BrowserType.InternetExplorer
-            }, {        // unknown but gecko
-                s: useragent,
-                sub: "Gecko",
-                id: "Mozilla",
-                ver: "rv",
-                btype: BrowserType.Mozilla
-            }, {        // for older Netscapes (4-)
-                s: useragent,
-                sub: "Mozilla",
-                id: "Netscape",
-                ver: "Mozilla",
-                btype: BrowserType.Mozilla
-            }
+            },
         ];
 
         fn = function () {
@@ -332,32 +235,18 @@ class JpKeyCodeFilter implements KeyCodeFilter {
                 case BrowserType.InternetExplorer:
                     t[243] = 244;        // HanZen
                     break;
-                case BrowserType.Netscape6:
-                    // treat Netscape as Firefox
-                    version = 1;
-                // ** FALL THROUGH **
                 case BrowserType.Firefox:
                     t[109] = 189;        // -
-                    t[59] = 186;        // :
-
-                    if (version >= 3) {
-                        t[107] = -1;    // ;, num+ -> [keypress]
-                        t[243] = 244;    // HanZen
-                    } else {
-                        t[61] = 187;    // ;
-                        t[229] = 244;    // HanZen, Henkan, Kana -> HanZen
-                    }
+                    t[59] = 186;         // :
+                    t[107] = -1;         // ;, num+ -> [keypress]
+                    t[243] = 244;        // HanZen
                     break;
                 case BrowserType.Chrome:
                     t[243] = 244;        // HanZen
                     t[229] = 244;        // HanZen
                     break;
                 case BrowserType.Safari:
-                    if (version >= 5) {
-                        t[229] = 244;    // HanZen
-                    } else {
-                        t[229] = 244;    // HanZen, Henkan, Kana -> HanZen
-                    }
+                    t[229] = 244;    // HanZen
                     break;
                 case BrowserType.Opera:
                     t[0] = 93;            // menu
@@ -369,34 +258,16 @@ class JpKeyCodeFilter implements KeyCodeFilter {
                     for (var i = 48; i <= 57; ++i) {
                         t[i] = i;        // num0 ~ num9 -> 0-9
                     }
-                    if (version < 9.5) {
-                        t[44] = 188;    // ,
-                        t[45] = 189;    // -, ins, num- -> hyphen
-                        t[46] = 190;    // dot, del -> dot
-                        t[47] = 191;    // /
-                        t[58] = 186;    // :
-                        t[59] = 187;    // ;
-                        t[64] = 192;    // @
-                        t[91] = 219;    // [, LWin -> [
-                        t[92] = 220;    // \|, \_, RWin -> \|
-                        t[93] = 221;    // ]
-                        t[94] = 222;    // ^
-                    } else {
-                        t[45] = 109;    // num-, ins -> num-
-                        t[50] = -1;        // @, 2, num2 -> [keypress]
-                        t[54] = -1;        // ^, 6, num6 -> [keypress]
-                        t[59] = -1;        // ;, : -> [keypress]
-                        t[109] = 189;    // -
-                        t[219] = 219;    // [, LWin, RWin -> [
-                        t[220] = 220;    // \|, \_ -> \|
-                    }
-                    if (version < 10) {
-                        t[197] = 244;    // HanZen, Henkan, Kana -> HanZen
-                    } else {
-                        t[210] = 242;    // Kana
-                        t[211] = 244;    // HanZen
-                        t[212] = 244;    // HanZen
-                    }
+                    t[45] = 109;    // num-, ins -> num-
+                    t[50] = -1;        // @, 2, num2 -> [keypress]
+                    t[54] = -1;        // ^, 6, num6 -> [keypress]
+                    t[59] = -1;        // ;, : -> [keypress]
+                    t[109] = 189;    // -
+                    t[219] = 219;    // [, LWin, RWin -> [
+                    t[220] = 220;    // \|, \_ -> \|
+                    t[210] = 242;    // Kana
+                    t[211] = 244;    // HanZen
+                    t[212] = 244;    // HanZen
                     break;
                 default:
                     break;

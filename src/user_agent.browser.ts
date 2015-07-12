@@ -1,14 +1,9 @@
 ﻿export enum BrowserType {
     InternetExplorer,
     Chrome,
-    Camino,
     Firefox,
-    iCab,
-    Konqueror,
     Mozilla,
-    Netscape6,
     Opera,
-    OmniWeb,
     Safari,
     Unknown
 }

@@ -355,18 +355,6 @@ var KeyEventObservable = (function () {
             root.addEventListener("keypress", callback, false);
             root.addEventListener("keyup", callback, false);
         }
-        else if (root.attachEvent) {
-            // IE
-            root.attachEvent("onkeydown", callback);
-            root.attachEvent("onkeypress", callback);
-            root.attachEvent("onkeyup", callback);
-        }
-        else if (root.onkeydown) {
-            // DOM Level 0 (trad)
-            root.onkeydown = callback;
-            root.onkeypress = callback;
-            root.onkeyup = callback;
-        }
         else {
             throw new Error("failed to add listener.");
         }
@@ -379,18 +367,6 @@ var KeyEventObservable = (function () {
             root.removeEventListener("keydown", callback, false);
             root.removeEventListener("keypress", callback, false);
             root.removeEventListener("keyup", callback, false);
-        }
-        else if (root.detachEvent) {
-            // IE
-            root.detachEvent("onkeydown", callback);
-            root.detachEvent("onkeypress", callback);
-            root.detachEvent("onkeyup", callback);
-        }
-        else if (root.onkeydown) {
-            // DOM Level 0 (trad)
-            root.onkeydown = void 0;
-            root.onkeypress = void 0;
-            root.onkeyup = void 0;
         }
         else {
             throw new Error("failed to remove listener.");
@@ -421,130 +397,33 @@ var UserAgent = (function () {
                     sub: "Chrome",
                     id: "Chrome",
                     btype: BrowserType.Chrome
-                }, {
-                    s: useragent,
-                    sub: "OmniWeb",
-                    ver: "OmniWeb/",
-                    id: "OmniWeb",
-                    btype: BrowserType.OmniWeb
-                }, {
+                },
+                {
                     s: navigatorvendor,
                     sub: "Apple",
                     id: "Safari",
                     ver: "Version",
                     btype: BrowserType.Safari
-                }, {
+                },
+                {
                     prop: this.window.opera,
                     id: "Opera",
                     ver: "Version",
                     btype: BrowserType.Opera
-                }, {
-                    prop: this.window.opera,
-                    id: "Opera",
-                    btype: BrowserType.Opera
-                }, {
-                    s: navigatorvendor,
-                    sub: "iCab",
-                    id: "iCab",
-                    btype: BrowserType.iCab
-                }, {
-                    s: navigatorvendor,
-                    sub: "KDE",
-                    id: "Konqueror",
-                    btype: BrowserType.Konqueror
-                }, {
+                },
+                {
                     s: useragent,
                     sub: "Firefox",
                     id: "Firefox",
                     btype: BrowserType.Firefox
-                }, {
-                    s: useragent,
-                    sub: "Minefield",
-                    id: "Firefox",
-                    ver: "Minefield",
-                    btype: BrowserType.Firefox
-                }, {
-                    s: useragent,
-                    sub: "Phoenix",
-                    id: "Firefox",
-                    ver: "Phoenix",
-                    btype: BrowserType.Firefox
-                }, {
-                    s: useragent,
-                    sub: "BonEcho",
-                    id: "Firefox",
-                    ver: "BonEcho",
-                    btype: BrowserType.Firefox
-                }, {
-                    s: useragent,
-                    sub: "GranParadiso",
-                    id: "Firefox",
-                    ver: "GranParadiso",
-                    btype: BrowserType.Firefox
-                }, {
-                    s: useragent,
-                    sub: "Shiretoko",
-                    id: "Firefox",
-                    ver: "Shiretoko",
-                    btype: BrowserType.Firefox
-                }, {
-                    s: useragent,
-                    sub: "Namoroka",
-                    id: "Firefox",
-                    ver: "Namoroka",
-                    btype: BrowserType.Firefox
-                }, {
-                    s: useragent,
-                    sub: "Lorentz",
-                    id: "Firefox",
-                    ver: "Lorentz",
-                    btype: BrowserType.Firefox
-                }, {
-                    s: useragent,
-                    sub: "Iceweasel",
-                    id: "Firefox",
-                    ver: "Iceweasel",
-                    btype: BrowserType.Firefox
-                }, {
-                    s: useragent,
-                    sub: "IceCat",
-                    id: "Firefox",
-                    ver: "IceCat",
-                    btype: BrowserType.Firefox
-                }, {
-                    s: navigatorvendor,
-                    sub: "Camino",
-                    id: "Camino",
-                    btype: BrowserType.Camino
-                }, {
-                    s: useragent,
-                    sub: "Netscape6",
-                    id: "Netscape6",
-                    btype: BrowserType.Netscape6
-                }, {
-                    s: useragent,
-                    sub: "Netscape",
-                    id: "Netscape6",
-                    btype: BrowserType.Netscape6
-                }, {
+                },
+                {
                     s: useragent,
                     sub: "MSIE",
                     id: "IE",
                     ver: "MSIE",
                     btype: BrowserType.InternetExplorer
-                }, {
-                    s: useragent,
-                    sub: "Gecko",
-                    id: "Mozilla",
-                    ver: "rv",
-                    btype: BrowserType.Mozilla
-                }, {
-                    s: useragent,
-                    sub: "Mozilla",
-                    id: "Netscape",
-                    ver: "Mozilla",
-                    btype: BrowserType.Mozilla
-                }
+                },
             ];
             fn = function () {
                 return (c++ === 1) ? '' : '.';
@@ -718,33 +597,18 @@ var JpKeyCodeFilter = (function () {
                 case BrowserType.InternetExplorer:
                     t[243] = 244; // HanZen
                     break;
-                case BrowserType.Netscape6:
-                    // treat Netscape as Firefox
-                    version = 1;
-                // ** FALL THROUGH **
                 case BrowserType.Firefox:
                     t[109] = 189; // -
                     t[59] = 186; // :
-                    if (version >= 3) {
-                        t[107] = -1; // ;, num+ -> [keypress]
-                        t[243] = 244; // HanZen
-                    }
-                    else {
-                        t[61] = 187; // ;
-                        t[229] = 244; // HanZen, Henkan, Kana -> HanZen
-                    }
+                    t[107] = -1; // ;, num+ -> [keypress]
+                    t[243] = 244; // HanZen
                     break;
                 case BrowserType.Chrome:
                     t[243] = 244; // HanZen
                     t[229] = 244; // HanZen
                     break;
                 case BrowserType.Safari:
-                    if (version >= 5) {
-                        t[229] = 244; // HanZen
-                    }
-                    else {
-                        t[229] = 244; // HanZen, Henkan, Kana -> HanZen
-                    }
+                    t[229] = 244; // HanZen
                     break;
                 case BrowserType.Opera:
                     t[0] = 93; // menu
@@ -756,36 +620,16 @@ var JpKeyCodeFilter = (function () {
                     for (var i = 48; i <= 57; ++i) {
                         t[i] = i; // num0 ~ num9 -> 0-9
                     }
-                    if (version < 9.5) {
-                        t[44] = 188; // ,
-                        t[45] = 189; // -, ins, num- -> hyphen
-                        t[46] = 190; // dot, del -> dot
-                        t[47] = 191; // /
-                        t[58] = 186; // :
-                        t[59] = 187; // ;
-                        t[64] = 192; // @
-                        t[91] = 219; // [, LWin -> [
-                        t[92] = 220; // \|, \_, RWin -> \|
-                        t[93] = 221; // ]
-                        t[94] = 222; // ^
-                    }
-                    else {
-                        t[45] = 109; // num-, ins -> num-
-                        t[50] = -1; // @, 2, num2 -> [keypress]
-                        t[54] = -1; // ^, 6, num6 -> [keypress]
-                        t[59] = -1; // ;, : -> [keypress]
-                        t[109] = 189; // -
-                        t[219] = 219; // [, LWin, RWin -> [
-                        t[220] = 220; // \|, \_ -> \|
-                    }
-                    if (version < 10) {
-                        t[197] = 244; // HanZen, Henkan, Kana -> HanZen
-                    }
-                    else {
-                        t[210] = 242; // Kana
-                        t[211] = 244; // HanZen
-                        t[212] = 244; // HanZen
-                    }
+                    t[45] = 109; // num-, ins -> num-
+                    t[50] = -1; // @, 2, num2 -> [keypress]
+                    t[54] = -1; // ^, 6, num6 -> [keypress]
+                    t[59] = -1; // ;, : -> [keypress]
+                    t[109] = 189; // -
+                    t[219] = 219; // [, LWin, RWin -> [
+                    t[220] = 220; // \|, \_ -> \|
+                    t[210] = 242; // Kana
+                    t[211] = 244; // HanZen
+                    t[212] = 244; // HanZen
                     break;
                 default:
                     break;
@@ -817,16 +661,11 @@ var JpKeyCodeFilter = (function () {
 (function (BrowserType) {
     BrowserType[BrowserType["InternetExplorer"] = 0] = "InternetExplorer";
     BrowserType[BrowserType["Chrome"] = 1] = "Chrome";
-    BrowserType[BrowserType["Camino"] = 2] = "Camino";
-    BrowserType[BrowserType["Firefox"] = 3] = "Firefox";
-    BrowserType[BrowserType["iCab"] = 4] = "iCab";
-    BrowserType[BrowserType["Konqueror"] = 5] = "Konqueror";
-    BrowserType[BrowserType["Mozilla"] = 6] = "Mozilla";
-    BrowserType[BrowserType["Netscape6"] = 7] = "Netscape6";
-    BrowserType[BrowserType["Opera"] = 8] = "Opera";
-    BrowserType[BrowserType["OmniWeb"] = 9] = "OmniWeb";
-    BrowserType[BrowserType["Safari"] = 10] = "Safari";
-    BrowserType[BrowserType["Unknown"] = 11] = "Unknown";
+    BrowserType[BrowserType["Firefox"] = 2] = "Firefox";
+    BrowserType[BrowserType["Mozilla"] = 3] = "Mozilla";
+    BrowserType[BrowserType["Opera"] = 4] = "Opera";
+    BrowserType[BrowserType["Safari"] = 5] = "Safari";
+    BrowserType[BrowserType["Unknown"] = 6] = "Unknown";
 })(exports.BrowserType || (exports.BrowserType = {}));
 var BrowserType = exports.BrowserType;
 var Browser = (function () {

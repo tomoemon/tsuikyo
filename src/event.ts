@@ -180,16 +180,6 @@ class KeyEventObservable {
             root.addEventListener("keydown", callback, false);
             root.addEventListener("keypress", callback, false);
             root.addEventListener("keyup", callback, false);
-        } else if (root.attachEvent) {
-            // IE
-            root.attachEvent("onkeydown", callback);
-            root.attachEvent("onkeypress", callback);
-            root.attachEvent("onkeyup", callback);
-        } else if (root.onkeydown) {
-            // DOM Level 0 (trad)
-            root.onkeydown = callback;
-            root.onkeypress = callback;
-            root.onkeyup = callback;
         } else {
             throw new Error("failed to add listener.");
         }
@@ -204,16 +194,6 @@ class KeyEventObservable {
             root.removeEventListener("keydown", callback, false);
             root.removeEventListener("keypress", callback, false);
             root.removeEventListener("keyup", callback, false);
-        } else if (root.detachEvent) {
-            // IE
-            root.detachEvent("onkeydown", callback);
-            root.detachEvent("onkeypress", callback);
-            root.detachEvent("onkeyup", callback);
-        } else if (root.onkeydown) {
-            // DOM Level 0 (trad)
-            root.onkeydown = void 0;
-            root.onkeypress = void 0;
-            root.onkeyup = void 0;
         } else {
             throw new Error("failed to remove listener.");
         }
