@@ -13,7 +13,7 @@ export class KeyStrokeEvent {
         public keyState: { [index: number]: boolean} // flag to block key repeat
         ) { }
 
-    shifted(): boolean {
+    get shifted(): boolean {
         return !!this.keyState[16];
     }
 }
@@ -34,7 +34,7 @@ export class KeyStrokeObservable {
     private browser: Browser;
     private keyFilter: KeyCodeFilter;
 
-    private shifted(): boolean {
+    private get shifted(): boolean {
         return !!this.keyState[16];
     }
 
@@ -65,7 +65,7 @@ export class KeyStrokeObservable {
             case "keydown":
                 this.nativeKeyCode = nativeKeyCode; // update only here
 
-                keyCode = this.keyFilter.keydown(nativeKeyCode, this.shifted());
+                keyCode = this.keyFilter.keydown(nativeKeyCode, this.shifted);
                 if (keyCode >= 0) {
                     // the key has been identified
                     if (!this.keyState[keyCode]) {
@@ -82,7 +82,7 @@ export class KeyStrokeObservable {
                 break;
             case "keypress":
                 if (!this.stroked) {
-                    keyCode = this.keyFilter.keypress(nativeKeyCode, this.shifted());
+                    keyCode = this.keyFilter.keypress(nativeKeyCode, this.shifted);
                     if (!this.keyState[keyCode]) {
                         this.keyState[keyCode] = true;
                         // 直前の keydown したときの nativeKeyCode を参照する
@@ -96,7 +96,7 @@ export class KeyStrokeObservable {
                 }
                 break;
             case "keyup":
-                keyCode = this.keyFilter.keyup(nativeKeyCode, this.shifted());
+                keyCode = this.keyFilter.keyup(nativeKeyCode, this.shifted);
                 if (keyCode >= 0) {
                     if (this.keyState[keyCode]) {
                         this.keyState[keyCode] = false;

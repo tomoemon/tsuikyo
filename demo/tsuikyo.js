@@ -198,9 +198,13 @@ var KeyStrokeEvent = (function () {
         this.keyCode = keyCode;
         this.keyState = keyState;
     }
-    KeyStrokeEvent.prototype.shifted = function () {
-        return !!this.keyState[16];
-    };
+    Object.defineProperty(KeyStrokeEvent.prototype, "shifted", {
+        get: function () {
+            return !!this.keyState[16];
+        },
+        enumerable: true,
+        configurable: true
+    });
     return KeyStrokeEvent;
 })();
 exports.KeyStrokeEvent = KeyStrokeEvent;
@@ -224,9 +228,13 @@ var KeyStrokeObservable = (function () {
         this.keyObservable = new KeyEventObservable(element);
         this.keyObservable.subscribe(function (rawEvent) { return _this.wrapper(rawEvent); });
     }
-    KeyStrokeObservable.prototype.shifted = function () {
-        return !!this.keyState[16];
-    };
+    Object.defineProperty(KeyStrokeObservable.prototype, "shifted", {
+        get: function () {
+            return !!this.keyState[16];
+        },
+        enumerable: true,
+        configurable: true
+    });
     KeyStrokeObservable.prototype.subscribe = function (callback) {
         this.callback = callback;
     };
@@ -240,7 +248,7 @@ var KeyStrokeObservable = (function () {
         switch (e.type) {
             case "keydown":
                 this.nativeKeyCode = nativeKeyCode; // update only here
-                keyCode = this.keyFilter.keydown(nativeKeyCode, this.shifted());
+                keyCode = this.keyFilter.keydown(nativeKeyCode, this.shifted);
                 if (keyCode >= 0) {
                     // the key has been identified
                     if (!this.keyState[keyCode]) {
@@ -258,7 +266,7 @@ var KeyStrokeObservable = (function () {
                 break;
             case "keypress":
                 if (!this.stroked) {
-                    keyCode = this.keyFilter.keypress(nativeKeyCode, this.shifted());
+                    keyCode = this.keyFilter.keypress(nativeKeyCode, this.shifted);
                     if (!this.keyState[keyCode]) {
                         this.keyState[keyCode] = true;
                         // 直前の keydown したときの nativeKeyCode を参照する
@@ -272,7 +280,7 @@ var KeyStrokeObservable = (function () {
                 }
                 break;
             case "keyup":
-                keyCode = this.keyFilter.keyup(nativeKeyCode, this.shifted());
+                keyCode = this.keyFilter.keyup(nativeKeyCode, this.shifted);
                 if (keyCode >= 0) {
                     if (this.keyState[keyCode]) {
                         this.keyState[keyCode] = false;
@@ -944,7 +952,7 @@ var Engine = (function () {
         var keyCheck = this._im.symTable;
         e.type = "keystroke";
         if (env) {
-            e.mod = env.shifted();
+            e.mod = env.shifted;
             keysyms = this._layout[env.keyCode][e.mod ? 1 : 0];
             if (keysyms instanceof Array) {
                 e.key = keysyms[0];
