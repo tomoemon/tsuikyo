@@ -117,7 +117,7 @@ export class Engine {
         e.type = "keystroke";
 
         if (env) {
-            e.mod = env.shifted();
+            e.mod = env.shifted;
             keysyms = this._layout[env.keyCode][e.mod ? 1 : 0];
             if (keysyms instanceof Array) {
                 e.key = keysyms[0];
